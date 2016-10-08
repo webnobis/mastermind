@@ -40,5 +40,9 @@ public interface Verifier<E> {
 				.sorted()
 				.collect(Collectors.toList());
 	}
+	
+	default boolean isFinish(List<Result> result) {
+		return (expected().size() == result.size()) && result.stream().allMatch(Result.CORRECT_PLACE::equals);
+	}
 
 }
