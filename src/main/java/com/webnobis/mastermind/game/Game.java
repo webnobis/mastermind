@@ -2,11 +2,15 @@ package com.webnobis.mastermind.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface Game<E> {
+
+	String getId();
 
 	boolean isEasyVerify();
 
@@ -34,17 +38,24 @@ public interface Game<E> {
 	}
 
 	static <E> Game<E> create(Supplier<E> expectedSupplier, boolean easyVerify) {
-		return create(Stream.generate(expectedSupplier).collect(Collectors.toList()), easyVerify);
+		return create(Stream.generate(expectedSupplier).limit(100).collect(Collectors.toList()), easyVerify);
 	}
 
 	static <E> Game<E> create(List<E> expected, boolean easyVerify) {
 		return new Game<E>() {
+
+			private final String id = UUID.randomUUID().toString();
 
 			private final Verifier<E> verifier = () -> expected;
 
 			private final List<List<E>> tries = new ArrayList<>();
 
 			private final List<List<Result>> results = new ArrayList<>();
+
+			@Override
+			public String getId() {
+				return id;
+			}
 
 			@Override
 			public boolean isEasyVerify() {
@@ -64,6 +75,27 @@ public interface Game<E> {
 			@Override
 			public List<List<Result>> getResults() {
 				return results;
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hash(id);
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (obj == this) {
+					return true;
+				}
+				if (obj == null || !this.getClass().equals(obj.getClass())) {
+					return false;
+				}
+				return Objects.equals(id, ((Game<?>) obj).getId());
+			}
+
+			@Override
+			public String toString() {
+				return String.format("%s(%s): %s tries, finish=%s", Game.class.getSimpleName(), id, tries(), isFinish());
 			}
 
 		};
