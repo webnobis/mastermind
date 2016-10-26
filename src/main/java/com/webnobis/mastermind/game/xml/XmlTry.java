@@ -6,16 +6,17 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="try")
+@XmlRootElement(name = "try")
 public class XmlTry<E> {
-	
+
 	@XmlElement
 	private final List<E> test;
 
 	public XmlTry(List<E> test) {
 		this.test = test;
 	}
-	
+
+	@OnlyForXmlTransformation
 	XmlTry() {
 		this(Collections.emptyList());
 	}

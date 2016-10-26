@@ -1,6 +1,6 @@
 package com.webnobis.mastermind.game.xml;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,8 +34,9 @@ public class XmlValidation<E> {
 		this.result = result;
 	}
 
+	@OnlyForXmlTransformation
 	XmlValidation() {
-		this(0, Collections.emptyList(), Collections.emptyList());
+		this(0, new ArrayList<>(), new ArrayList<>());
 	}
 
 	public int getTryCount() {

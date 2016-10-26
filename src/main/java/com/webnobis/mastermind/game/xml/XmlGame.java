@@ -1,6 +1,6 @@
 package com.webnobis.mastermind.game.xml;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,8 +36,9 @@ public class XmlGame<E> {
 		this.tries = tries;
 	}
 
+	@OnlyForXmlTransformation
 	XmlGame() {
-		this(false, false, Collections.emptyList(), Collections.emptyList());
+		this(false, false, new ArrayList<>(), new ArrayList<>());
 	}
 
 	public static <E> XmlGame<E> from(Game<E> game) {
