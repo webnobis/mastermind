@@ -6,18 +6,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name="game")
 public interface Game<E> {
 
-	@XmlElement(name="easyVerify")
 	boolean isEasyVerify();
 
 	Verifier<E> getVerifier();
 
-	@XmlElement(name="tries")
 	List<List<E>> getTries();
 
 	List<List<Result>> getResults();
@@ -48,7 +42,6 @@ public interface Game<E> {
 
 			private final Verifier<E> verifier = () -> expected;
 
-			@XmlElement(name="tries")
 			private final List<List<E>> tries = new ArrayList<>();
 
 			private final List<List<Result>> results = new ArrayList<>();
