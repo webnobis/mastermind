@@ -1,10 +1,12 @@
 package com.webnobis.mastermind.game.xml;
 
+import java.io.CharArrayWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -29,7 +31,7 @@ public class XmlGame<E> {
 	@XmlElement(name="try", required = false)
 	private final List<XmlValidation<E>> tries;
 
-	public XmlGame(boolean easyVerify, boolean finish, List<XmlValidation<E>> tries, List<E> expected) {
+	private XmlGame(boolean easyVerify, boolean finish, List<XmlValidation<E>> tries, List<E> expected) {
 		this.easyVerify = easyVerify;
 		this.finish = finish;
 		this.expected = expected;
@@ -63,4 +65,14 @@ public class XmlGame<E> {
 	public List<XmlValidation<E>> getTries() {
 		return tries;
 	}
+
+	@Override
+	public String toString() {
+		try (CharArrayWriter out = new CharArrayWriter()) {
+			JAXB.marshal(this, out);
+			out.flush();
+			return out.toString();
+		}
+	}
+	
 }

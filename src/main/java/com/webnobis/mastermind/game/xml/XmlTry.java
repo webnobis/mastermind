@@ -1,8 +1,10 @@
 package com.webnobis.mastermind.game.xml;
 
+import java.io.CharArrayWriter;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,6 +25,15 @@ public class XmlTry<E> {
 
 	public List<E> getTest() {
 		return test;
+	}
+
+	@Override
+	public String toString() {
+		try (CharArrayWriter out = new CharArrayWriter()) {
+			JAXB.marshal(this, out);
+			out.flush();
+			return out.toString();
+		}
 	}
 
 }
