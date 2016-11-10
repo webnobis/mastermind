@@ -51,11 +51,11 @@ public class GameToXmlTest {
 				game.getVerifier();
 				returns(verifier);
 
-				game.isEasyVerify();
-				returns(true);
-
 				game.isFinish();
 				returns(true);
+				
+				game.getId();
+				returns("id");
 
 				game.tries();
 				returns(2);
@@ -82,7 +82,8 @@ public class GameToXmlTest {
 			xmlGame = JAXB.unmarshal(in, XmlGame.class);
 		}
 		assertNotNull(xmlGame);
-		assertEquals(game.isEasyVerify(), xmlGame.isEasyVerify());
+		assertEquals(game.getId(), xmlGame.getId());
+		assertEquals(Integer.class.getName(), xmlGame.getType());
 		assertEquals(game.isFinish(), xmlGame.isFinish());
 		assertEquals(game.getVerifier().expected(), xmlGame.getExpected());
 		xmlGame.getTries().stream()
