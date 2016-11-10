@@ -1,13 +1,18 @@
 package com.webnobis.mastermind.game.xml;
 
+import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.transform.stream.StreamSource;
 
 @XmlRootElement(name = "try")
 public class XmlTry<E> {
@@ -21,6 +26,15 @@ public class XmlTry<E> {
 	public XmlTry(String id, List<E> test) {
 		this.id = id;
 		this.test = test;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> XmlTry<E> from(String xml) {
+		try (CharArrayReader in = new CharArrayReader(xml.toCharArray())) {
+			return (XmlTry<E>) JAXBContext.newInstance(XmlTry.class).createUnmarshaller().unmarshal(new StreamSource(in));
+		} catch (JAXBException e) {
+			throw new DataBindingException(e);
+		}
 	}
 
 	@OnlyForXmlTransformation

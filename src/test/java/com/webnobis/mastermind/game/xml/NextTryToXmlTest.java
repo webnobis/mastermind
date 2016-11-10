@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -42,10 +41,7 @@ public class NextTryToXmlTest {
 	}
 
 	private void validateXmlToObject(String xml) {
-		XmlTry<?> xmlTry;
-		try (CharArrayReader in = new CharArrayReader(xml.toCharArray())) {
-			xmlTry = JAXB.unmarshal(in, XmlTry.class);
-		}
+		XmlTry<Boolean> xmlTry = XmlTry.from(xml);
 		assertNotNull(xmlTry);
 		assertEquals(id, xmlTry.getId());
 		assertEquals(test, xmlTry.getTest());
