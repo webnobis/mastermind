@@ -11,17 +11,23 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.stream.StreamSource;
 
 @XmlRootElement(name = "try")
 public class XmlTry<E> {
 
-	@XmlAttribute
+	@XmlAttribute(required = false)
 	private final String id;
 
+	@XmlElementWrapper(name = "next")
 	@XmlElement
 	private final List<E> test;
+
+	public XmlTry(List<E> test) {
+		this(null, test);
+	}
 
 	public XmlTry(String id, List<E> test) {
 		this.id = id;
