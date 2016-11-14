@@ -10,21 +10,23 @@ import com.webnobis.mastermind.game.xml.XmlGame;
 import com.webnobis.mastermind.game.xml.XmlTry;
 import com.webnobis.mastermind.service.store.GameStore;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
+import ratpack.http.Status;
 import ratpack.http.TypedData;
 
 public class GameHandler implements Handler {
 
 	@Override
 	public void handle(Context ctx) throws Exception {
-		GameStore store = ctx.get(GameStore.class);
-
 		ctx.getRequest().getBody()
 			.map(TypedData::getText)
-			.map(xml -> createOrUpdate(xml, store))
+			.map(xml -> createOrUpdate(xml, ctx.get(GameStore.class)))
+			.onError(IllegalArgumentException.class, e -> ctx.getResponse().status(Status.of(HttpResponseStatus.EXPECTATION_FAILED.code(), e.getMessage())))
 			.map(XmlGame::from)
 			.map(XmlGame::toString)
+			.onError(ctx::error)
 			.then(ctx.getResponse().contentType("application/xml")::send);
 	}
 	
