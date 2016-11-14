@@ -64,30 +64,6 @@
 					<show>protected</show>
 					<nohelp>true</nohelp>
 				</configuration>
-				<executions>
-					<execution>
-						<id>generate-service-docs</id>
-						<phase>generate-resources</phase>
-						<configuration>
-							<doclet>com.carma.swagger.doclet.ServiceDoclet</doclet>
-							<docletArtifact>
-								<groupId>com.carma</groupId>
-								<artifactId>swagger-doclet</artifactId>
-								<version>1.0.3</version>
-							</docletArtifact>
-							<reportOutputDirectory>${project.build.outputDirectory}</reportOutputDirectory>
-							<useStandardDocletOptions>false</useStandardDocletOptions>
-							<additionalparam>-apiVersion 1 -docBasePath
-								https://example.com/apidocs -apiBasePath
-								https://example.com/api -swaggerUiPath
-								../../../src/main/resources/swagger-ui/
-							</additionalparam>
-						</configuration>
-						<goals>
-							<goal>javadoc</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
