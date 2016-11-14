@@ -1,6 +1,7 @@
 package com.webnobis.mastermind.service.handler;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import mockit.Expectations;
@@ -25,5 +26,8 @@ public class GameHandlerTest {
 //			ctx.getRequest().getBody().map(data -> data.getText()).then(then);
 		}};
 	}
+	
+	@Test
+	public void test() {}
 
 }
