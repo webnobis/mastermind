@@ -1,0 +1,260 @@
+swagger: "2.0"
+info:
+  version: "2.0"
+  title: RI-Anzeige Abfahrtstafel-Abonnementservice
+  description: A REST server providing access to RI Abfahrtstafel-Abonnements.
+basePath: /abfahrtstafel/v2
+schemes:
+  - http
+  - https
+paths:
+  '/':
+    post:
+      description: Create a new AbfahrtstafelAbonnement
+      consumes:
+        - application/json
+      parameters:
+        - name: abonnement
+          in: body
+          description: abonnement to be created
+          required: true
+          schema:
+            $ref: '#/definitions/AbfahrtstafelAbonnement'
+      responses:
+        '201':
+          description: AbfahrtstafelAbonnement created response
+          headers:
+            Location:
+              type: string
+              description: the location of the newly created AbfahrtstafelAbonnement
+          schema:
+            $ref: '#/definitions/AbfahrtstafelAbonnementResponse'
+        '400':
+          description: Bad abonnement parameters
+        default:
+          description: unexpected error
+
+  '/{abonnementid}':
+    get:
+      description: Retrieve an existing AbfahrtstafelAbonnement
+      produces:
+        - application/json
+      parameters:
+        - name: abonnementid
+          in: path
+          required: true
+          description: Id of the AbfahrtstafelAbonnement to load
+          type: string
+      responses:
+        '200':
+          description: AbfahrtstafelAbonnement response
+          schema:
+            $ref: '#/definitions/AbfahrtstafelAbonnementResponse'
+        '404':
+          description: No ressource available
+          # schema:
+          #   $ref: '#/definitions/Error'
+        default:
+          description: unexpected error
+    delete:
+      description: Delete an existing AbfahrtstafelAbonnement
+      parameters:
+        - name: abonnementid
+          in: path
+          required: true
+          description: Id of the AbfahrtstafelAbonnement to delete
+          type: string
+      responses:
+        '204':
+          description: Success
+        '404':
+          description: Bad abonnementid
+        default:
+          description: unexpected error
+definitions:
+  ## optional error handling object for any send errors
+  # Error:
+  #   required:
+  #     - error
+  #   properties:
+  #     error:
+  #       description: user readable error
+  #       type: string
+  #     message:
+  #       type: string
+  #     type:
+  #       type: string
+  #     cause:
+  #       $ref: '#/definitions/Error'
+  #     stacktrace:
+  #       type: string
+
+  AbfahrtstafelAbonnement:
+    description: AbfahrtstafelAbonemment
+    required:
+      - meta
+        ## different requirements for response has to be solved via extended model with allOf: $ref: '#/definitions/AbonnementMetadata'
+        # - abonnementtyp
+        # - version
+      - data
+    properties:
+      meta:
+        $ref: '#/definitions/AbonnementMetadata'
+      data:
+        $ref: '#/definitions/AbfahrtstafelAbonnementData'
+
+  AbonnementMetadata:
+    required:
+      ## different requirements for response has to be solved via extended model with allOf: $ref: '#/definitions/AbonnementMetadata'
+      - abonnementid
+      - abonnementtyp
+      - created
+      - version
+    properties:
+      abonnementid:
+        type: string
+        format: uuid
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+      abonnementtyp:
+        type: string
+        enum:
+          - 'ABFAHRTSTAFEL'
+        default: 'ABFAHRTSTAFEL'
+      created:
+        type: string
+        format: 'date-time'
+      version:
+        type: string
+        enum:
+          - 'v2'
+        default: 'v2'
+
+  AbfahrtstafelAbonnementData:
+    required:
+      - eintragCount
+      - gueltigVon
+      - gueltigBis
+      - allHaltestelle
+      - abonnent
+    properties:
+      eintragCount:
+        type: integer
+        format: int32
+        # default: 10
+      gueltigVon:
+        type: string
+        format: 'date-time'
+      gueltigBis:
+        type: string
+        format: 'date-time'
+      allHaltestelle:
+        type: array
+        items:
+          $ref: '#/definitions/Haltestelle'
+      abonnent:
+          $ref: '#/definitions/Abonnent'
+    example:
+      eintragCount: 10
+      gueltigVon: "2015-01-11T12:26:00.000Z"
+      gueltigBis: "2022-09-13T23:59:59.999Z"
+      allHaltestelle:
+        [
+          evaNummer: "8000105",
+          evaNummer: "8000115"
+        ]
+      abonnent:
+        standort:
+          evaNummer: "8000105"
+
+  Abonnent:
+    required:
+      - standort
+    properties:
+      standort:
+        $ref: '#/definitions/Standort'
+
+  Standort:
+    required:
+      - evaNummer
+    properties:
+      evaNummer:
+        type: string
+    example:
+      evaNummer: "8000105"
+
+  Haltestelle:
+    required:
+      - evaNummer
+    properties:
+      evaNummer:
+        description: The EVA-Nummer of the Bahnhof
+        type: string
+      ## future features gleis-filter
+      # allGleis:
+      #   description: Gleisbezeichnungen for the Bahnhof
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/Gleis'
+    example:
+      evaNummer: "8000105"
+
+  ## Gleis.gleisnummerBezeichnung becomes .gleisbezeichnung as in https://pxr.instajira.com/browse/PXRKERNDEV-755
+  ## any other fields are future features
+  # Gleis:
+  #   required:
+  #     - gleisbezeichnung
+  #   properties:
+  #     # gleisnummerBezeichnung:
+  #     #   type: string
+  #     #   description: "@Deprecated"
+  #     # gleisabschnittBezeichnung:
+  #     #   type: string
+  #     #   description: "@Deprecated"
+  #     gleisbezeichnung:
+  #       type: string
+
+  AbfahrtstafelAbonnementResponse:
+    required:
+      - meta
+        ## different requirements for response has to be solved via extended model with allOf: $ref: '#/definitions/AbonnementMetadata'
+        # - abonnementid
+        # - abonnementtyp
+        # - created
+        # - version
+      - data
+      - _links
+    properties:
+      meta:
+        $ref: '#/definitions/AbonnementMetadata'
+      data:
+        $ref: '#/definitions/AbfahrtstafelAbonnementData'
+      _links:
+        type: object
+        properties:
+          self:
+            $ref: '#/definitions/Link'
+        required:
+          - self
+        example:
+          self:
+            href: "http://localhost:5050/abfahrtstafel/v2/f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            method: "GET"
+            templated: false
+
+  Link:
+    type: object
+    properties:
+      href:
+        type: string
+      method:
+        type: string
+        enum:
+          - 'GET'
+          - 'POST'
+        default: 'GET'
+      templated:
+        type: boolean
+        default: false
+    required:
+      - href
+      - method

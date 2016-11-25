@@ -64,30 +64,6 @@
 					<show>protected</show>
 					<nohelp>true</nohelp>
 				</configuration>
-				<executions>
-					<execution>
-						<id>generate-service-docs</id>
-						<phase>generate-resources</phase>
-						<configuration>
-							<doclet>com.carma.swagger.doclet.ServiceDoclet</doclet>
-							<docletArtifact>
-								<groupId>com.carma</groupId>
-								<artifactId>swagger-doclet</artifactId>
-								<version>1.0.3</version>
-							</docletArtifact>
-							<reportOutputDirectory>${project.build.outputDirectory}</reportOutputDirectory>
-							<useStandardDocletOptions>false</useStandardDocletOptions>
-							<additionalparam>-apiVersion 1 -docBasePath
-								https://example.com/apidocs -apiBasePath
-								https://example.com/api -swaggerUiPath
-								../../../src/main/resources/swagger-ui/
-							</additionalparam>
-						</configuration>
-						<goals>
-							<goal>javadoc</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -101,6 +77,68 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/swagger/swagger.yaml</inputSpec>
+							<language>java</language>
+							<invokerPackage>com.hpe.xxx.augmentation.client</invokerPackage>
+							<apiPackage>com.hpe.xxx.augmentation.client.api</apiPackage>
+							<modelPackage>com.hpe.xxx.augmentation.client.dto</modelPackage>
+							<library>jersey2</library>
+							<configOptions>
+								<dateLibrary>java8</dateLibrary>
+							</configOptions>
+							<output>target/generated-sources/swagger</output>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>io.swagger</groupId>
+						<artifactId>swagger-codegen</artifactId>
+						<version>2.2.1</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-core</artifactId>
+						<version>2.8.4</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-annotations</artifactId>
+						<version>2.8.4</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-databind</artifactId>
+						<version>2.8.4</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.dataformat</groupId>
+						<artifactId>jackson-dataformat-yaml</artifactId>
+						<version>2.8.4</version>
+					</dependency>
+					<dependency>
+						<groupId>com.fasterxml.jackson.datatype</groupId>
+						<artifactId>jackson-datatype-jdk8</artifactId>
+						<version>2.8.4</version>
+					</dependency>
+					<dependency>
+						<groupId>junit</groupId>
+						<artifactId>junit</artifactId>
+						<version>4.12</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
@@ -128,5 +166,41 @@
 			<version>1.4.2</version>
 			<scope>test</scope>
 		</dependency>
+							<!--dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-java-client</artifactId>
+			<version>1.0.0</version>
+			<scope>compile</scope>
+		</dependency-->
+<dependency>
+						<groupId>io.swagger</groupId>
+						<artifactId>swagger-jersey2-jaxrs</artifactId>
+						<version>1.5.10</version>
+					</dependency>
+							<dependency>
+								<groupId>io.swagger</groupId>
+								<artifactId>swagger-jaxrs</artifactId>
+								<version>1.5.10</version>
+							</dependency>
+							<dependency>
+						<groupId>com.brsanthu</groupId>
+						<artifactId>migbase64</artifactId>
+						<version>2.2</version>
+					</dependency>
+					<dependency>
+						<groupId>org.glassfish.jersey.media</groupId>
+						<artifactId>jersey-media-multipart</artifactId>
+						<version>2.24</version>
+					</dependency>
+					<dependency>
+						<groupId>org.glassfish.jersey.core</groupId>
+						<artifactId>jersey-client</artifactId>
+						<version>2.24</version>
+					</dependency>
+					<dependency>
+						<groupId>org.glassfish.jersey.media</groupId>
+						<artifactId>jersey-media-json-jackson</artifactId>
+						<version>2.24</version>
+					</dependency>
 	</dependencies>
 </project>
