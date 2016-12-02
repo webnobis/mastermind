@@ -17,6 +17,8 @@ import ratpack.http.Status;
 import ratpack.http.TypedData;
 
 public class GameHandler implements Handler {
+	
+	public static final String RESPONSE_CONTENT_TYPE = "application/xml";
 
 	@Override
 	public void handle(Context ctx) throws Exception {
@@ -27,7 +29,7 @@ public class GameHandler implements Handler {
 			.map(XmlGame::from)
 			.map(XmlGame::toString)
 			.onError(ctx::error)
-			.then(ctx.getResponse().contentType("application/xml")::send);
+			.then(ctx.getResponse().contentType(RESPONSE_CONTENT_TYPE)::send);
 	}
 	
 	private static Game<Integer> createOrUpdate(String xml) {

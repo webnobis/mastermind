@@ -4,15 +4,20 @@ import com.webnobis.mastermind.service.handler.GameHandler;
 
 import ratpack.server.RatpackServer;
 
-public class MastermindService {
+public interface MastermindService {
 
-	public static void main(String[] args) throws Exception {
-		RatpackServer server = RatpackServer.of(spec -> spec
+	static RatpackServer create() throws Exception {
+		return RatpackServer.of(spec -> spec
 				.registryOf(registry -> registry
 						.add(new GameHandler()))
 				.handlers(chain -> chain
 						.post("game", GameHandler.class)
 						.get("hello", ctx -> ctx.render("Hello from MastermindService"))));
+	};
+
+	public static void main(String[] args) throws Exception {
+		RatpackServer server = MastermindService.create();
+
 		server.start();
 		try {
 			System.in.read();
