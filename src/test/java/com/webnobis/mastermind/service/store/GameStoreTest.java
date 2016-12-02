@@ -17,7 +17,7 @@ public class GameStoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		gameStore = GameStore.create();
+		gameStore = GameStore.get();
 	}
 
 	@Test

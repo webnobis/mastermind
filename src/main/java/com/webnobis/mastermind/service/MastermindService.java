@@ -11,7 +11,7 @@ public class MastermindService {
 		RatpackServer server = RatpackServer.of(spec -> spec
 				.registryOf(registry -> registry
 						.add(new GameHandler())
-						.addLazy(GameStore.class, () -> GameStore.create()))
+						.addLazy(GameStore.class, () -> GameStore.get()))
 				.handlers(chain -> chain
 						.post("game", GameHandler.class)
 						.get("hello", ctx -> ctx.render("Hello from MastermindService"))));
