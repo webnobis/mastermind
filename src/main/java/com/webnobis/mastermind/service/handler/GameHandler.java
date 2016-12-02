@@ -22,7 +22,7 @@ public class GameHandler implements Handler {
 	public void handle(Context ctx) throws Exception {
 		ctx.getRequest().getBody()
 			.map(TypedData::getText)
-			.map(xml -> createOrUpdate(xml, ctx.get(GameStore.class)))
+			.map(xml -> createOrUpdate(xml))
 			.onError(IllegalArgumentException.class, e -> ctx.getResponse().status(Status.of(HttpResponseStatus.EXPECTATION_FAILED.code(), e.getMessage())))
 			.map(XmlGame::from)
 			.map(XmlGame::toString)
@@ -30,23 +30,23 @@ public class GameHandler implements Handler {
 			.then(ctx.getResponse().contentType("application/xml")::send);
 	}
 	
-	private static Game<Integer> createOrUpdate(String xml, GameStore store) {
+	private static Game<Integer> createOrUpdate(String xml) {
 		return Optional.ofNullable(xml)
 		.<XmlTry<Integer>>map(XmlTry::from)
-		.map(xmlTry -> createOrUpdate(xmlTry, store))
+		.map(xmlTry -> createOrUpdate(xmlTry))
 		.orElseThrow(() -> new IllegalArgumentException("couldn't use for game: " + xml));
 	}
 	
-	private static Game<Integer> createOrUpdate(XmlTry<Integer> xmlTry, GameStore store) {
+	private static Game<Integer> createOrUpdate(XmlTry<Integer> xmlTry) {
 		Game<Integer> game = Optional.ofNullable(xmlTry.getId())
-			.<Game<Integer>>map(store::get)
+			.<Game<Integer>>map(GameStore.get()::get)
 			.filter(g -> g != null)
 			.orElseGet(GameHandler::create);
 		
 		List<Result> result = game.nextTry(xmlTry.getTest());
 		System.out.println(result);
 		
-		String id = store.store(game);
+		String id = GameStore.get().store(game);
 		System.out.println(id);
 
 		return game;
