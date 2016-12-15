@@ -28,7 +28,7 @@ public class XmlValidation<E> {
 	@XmlElement(name="result", required = false)
 	private final List<Result> result;
 
-	public XmlValidation(int tryCount, List<E> test, List<Result> result) {
+	XmlValidation(int tryCount, List<E> test, List<Result> result) {
 		this.tryCount = tryCount;
 		this.test = test;
 		this.result = result;

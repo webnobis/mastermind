@@ -1,10 +1,15 @@
 package com.webnobis.mastermind.game.xml;
 
+import java.io.CharArrayWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -16,7 +21,10 @@ import com.webnobis.mastermind.game.Game;
 public class XmlGame<E> {
 
 	@XmlAttribute
-	private final boolean easyVerify;
+	private final String id;
+
+	@XmlAttribute
+	private final String type;
 
 	@XmlAttribute
 	private final boolean finish;
@@ -26,11 +34,16 @@ public class XmlGame<E> {
 	private final List<E> expected;
 
 	@XmlElementWrapper(name = "tries")
-	@XmlElement(name="try", required = false)
+	@XmlElement(name = "try", required = false)
 	private final List<XmlValidation<E>> tries;
 
-	public XmlGame(boolean easyVerify, boolean finish, List<XmlValidation<E>> tries, List<E> expected) {
-		this.easyVerify = easyVerify;
+	private XmlGame(String id, boolean finish, List<XmlValidation<E>> tries, List<E> expected) {
+		this.id = id;
+		this.type = Stream.concat(tries.stream().flatMap(v -> v.getTest().stream()),
+				Optional.ofNullable(expected).orElse(Collections.emptyList()).stream())
+				.findFirst()
+				.map(e -> e.getClass().getName())
+				.orElse("unknown");
 		this.finish = finish;
 		this.expected = expected;
 		this.tries = tries;
@@ -38,18 +51,22 @@ public class XmlGame<E> {
 
 	@OnlyForXmlTransformation
 	XmlGame() {
-		this(false, false, new ArrayList<>(), new ArrayList<>());
+		this(null, false, new ArrayList<>(), new ArrayList<>());
 	}
 
 	public static <E> XmlGame<E> from(Game<E> game) {
-		return new XmlGame<>(game.isEasyVerify(), game.isFinish(), IntStream.range(0, game.tries())
+		return new XmlGame<>(game.getId(), game.isFinish(), IntStream.range(0, game.tries())
 				.mapToObj(i -> new XmlValidation<>(i, game.getTries().get(i), game.getResults().get(i)))
 				.sorted(XmlValidation.tryCountComparator)
 				.collect(Collectors.toList()), (game.isFinish()) ? game.getVerifier().expected() : null);
 	}
 
-	public boolean isEasyVerify() {
-		return easyVerify;
+	public String getId() {
+		return id;
+	}
+
+	public String getType() {
+		return type;
 	}
 
 	public boolean isFinish() {
@@ -63,4 +80,14 @@ public class XmlGame<E> {
 	public List<XmlValidation<E>> getTries() {
 		return tries;
 	}
+
+	@Override
+	public String toString() {
+		try (CharArrayWriter out = new CharArrayWriter()) {
+			JAXB.marshal(this, out);
+			out.flush();
+			return out.toString();
+		}
+	}
+
 }
