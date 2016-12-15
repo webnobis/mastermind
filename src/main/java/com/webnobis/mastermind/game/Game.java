@@ -1,6 +1,7 @@
 package com.webnobis.mastermind.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public interface Game<E> {
 
 			private final String id = UUID.randomUUID().toString();
 
-			private final Verifier<E> verifier = () -> expected;
+			private final Verifier<E> verifier = () -> Collections.unmodifiableList(expected);
 
 			private final List<List<E>> tries = new ArrayList<>();
 

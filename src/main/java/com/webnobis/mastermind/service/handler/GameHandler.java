@@ -1,11 +1,9 @@
 package com.webnobis.mastermind.service.handler;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import com.webnobis.mastermind.game.Game;
-import com.webnobis.mastermind.game.Result;
 import com.webnobis.mastermind.game.xml.XmlGame;
 import com.webnobis.mastermind.game.xml.XmlTry;
 import com.webnobis.mastermind.service.store.GameStore;
@@ -45,12 +43,8 @@ public class GameHandler implements Handler {
 			.filter(g -> g != null)
 			.orElseGet(GameHandler::create);
 		
-		List<Result> result = game.nextTry(xmlTry.getTest());
-		System.out.println(result);
-		
-		String id = GameStore.get().store(game);
-		System.out.println(id);
-
+		game.nextTry(xmlTry.getTest());
+		GameStore.get().store(game);
 		return game;
 	}
 	

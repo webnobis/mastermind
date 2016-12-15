@@ -26,12 +26,15 @@ import ratpack.test.http.TestHttpClient;
 public class MastermindServiceTest {
 
 	private GameFixture gameFixture;
+	
+	private String gameId;
 
 	private CloseableApplicationUnderTest testApp;
 
 	@Before
 	public void setUp() throws Exception {
 		gameFixture = GameFixture.create(true);
+		gameId = gameFixture.getGame().getId();
 		testApp = EmbeddedApp.fromServer(MastermindService.create());
 	}
 
@@ -52,13 +55,14 @@ public class MastermindServiceTest {
 		assertEquals(Status.OK, response.getStatus());
 		assertTrue(response.getBody().getContentType().getType().startsWith(GameHandler.RESPONSE_CONTENT_TYPE));
 
-		XmlGame<Integer> xmlGame = XmlGame.from(gameFixture.getGame());
+		XmlGame<Long> xmlGame = XmlGame.from(gameFixture.getGame());
+		assertEquals(gameId, xmlGame.getId());
 		assertEquals(xmlGame.toString(), response.getBody().getText());
 	}
 
 	@Test
 	public void testNextTry() {
-		testGame(Optional.of(Arrays.asList(Result.CONTAINED, Result.CORRECT_PLACE, Result.CONTAINED, Result.MISSING)));
+		testGame(Optional.of(Arrays.asList(Result.CONTAINED, Result.CORRECT_PLACE, Result.CONTAINED, Result.MISSING, Result.CONTAINED)));
 	}
 
 	@Test
