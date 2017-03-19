@@ -96,9 +96,9 @@
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/swagger/swagger.yaml</inputSpec>
 							<language>java</language>
-							<invokerPackage>com.hpe.xxx.augmentation.client</invokerPackage>
-							<apiPackage>com.hpe.xxx.augmentation.client.api</apiPackage>
-							<modelPackage>com.hpe.xxx.augmentation.client.dto</modelPackage>
+							<invokerPackage>com.webnobis.mastermind.swagger.client</invokerPackage>
+							<apiPackage>com.webnobis.mastermind.swagger.client.api</apiPackage>
+							<modelPackage>com.webnobis.mastermind.swagger.client.model</modelPackage>
 							<library>jersey2</library>
 							<configOptions>
 								<dateLibrary>java8</dateLibrary>
@@ -175,11 +175,11 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>2.24</version>
 		</dependency>
-		<!--dependency>
+		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-java-client</artifactId>
 			<version>1.0.0</version>
 			<scope>compile</scope>
-		</dependency-->
+		</dependency>
 	</dependencies>
 </project>
