@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public interface Game<E> {
 
@@ -36,10 +33,6 @@ public interface Game<E> {
 
 	default int tries() {
 		return getTries().size();
-	}
-
-	static <E> Game<E> create(Supplier<E> expectedSupplier, boolean easyVerify) {
-		return create(Stream.generate(expectedSupplier).limit(100).collect(Collectors.toList()), easyVerify);
 	}
 
 	static <E> Game<E> create(List<E> expected, boolean easyVerify) {

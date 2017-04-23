@@ -37,7 +37,7 @@ public class GameStoreTest {
 	
 	@Test
 	public void testGetAfterTries() {
-		Game<IndexOutOfBoundsException> game = Game.create(() -> new IndexOutOfBoundsException(), true);
+		Game<IndexOutOfBoundsException> game = Game.create(Collections.singletonList(new IndexOutOfBoundsException()), true);
 		gameStore.store(game);
 		
 		game.nextTry(Collections.emptyList());
