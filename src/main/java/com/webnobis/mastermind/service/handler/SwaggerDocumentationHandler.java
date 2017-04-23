@@ -7,8 +7,7 @@ public class SwaggerDocumentationHandler implements Handler {
 
 	@Override
 	public void handle(Context ctx) throws Exception {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }

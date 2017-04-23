@@ -1,34 +1,34 @@
 swagger: "2.0"
 info:
   version: "2.0"
-  title: RI-Anzeige Abfahrtstafel-Abonnementservice
-  description: A REST server providing access to RI Abfahrtstafel-Abonnements.
-basePath: /abfahrtstafel/v2
+  title: Mastermind REST interface
+  description: A REST server providing access to Mastermind.
+basePath: /
 schemes:
   - http
   - https
 paths:
-  '/':
+  '/game':
     post:
-      description: Create a new AbfahrtstafelAbonnement
+      description: Create a new Mastermind game
       consumes:
-        - application/json
+        - application/xml
       parameters:
-        - name: abonnement
+        - name: try
           in: body
-          description: abonnement to be created
+          description: the first try, used to create a new game
           required: true
           schema:
-            $ref: '#/definitions/AbfahrtstafelAbonnement'
+            $ref: '#/definitions/XmlTry'
       responses:
         '201':
-          description: AbfahrtstafelAbonnement created response
+          description: Mastermind game created response
           headers:
-            Location:
+            game-id:
               type: string
-              description: the location of the newly created AbfahrtstafelAbonnement
+              description: the id of the created game
           schema:
-            $ref: '#/definitions/AbfahrtstafelAbonnementResponse'
+            $ref: '#/definitions/XmlGame'
         '400':
           description: Bad abonnement parameters
         default:
