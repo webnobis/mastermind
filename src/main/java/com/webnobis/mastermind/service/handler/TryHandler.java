@@ -2,16 +2,20 @@ package com.webnobis.mastermind.service.handler;
 
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
+import ratpack.http.TypedData;
 
-public class GameHandler implements Handler {
+public class TryHandler implements Handler {
 
-	public GameHandler() {
+	public TryHandler() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void handle(Context ctx) throws Exception {
-		// TODO Auto-generated method stub
+		ctx.getRequest()
+		.getBody()
+		.map(TypedData::getText)
+		;
 
 	}
 

@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.service.store;
+package old;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

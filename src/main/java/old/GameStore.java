@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.service.store;
+package old;
 
 import com.webnobis.mastermind.game.Game;
 

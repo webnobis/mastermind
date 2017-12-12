@@ -1,9 +1,9 @@
 package com.webnobis.mastermind.service;
 
-import com.webnobis.mastermind.service.handler.GameHandler;
-
+import old.GameHandler;
 import ratpack.server.RatpackServer;
 
+@Deprecated
 public interface MastermindService {
 
 	static RatpackServer create() throws Exception {

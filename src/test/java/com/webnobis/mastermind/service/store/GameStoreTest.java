@@ -11,6 +11,8 @@ import org.junit.Test;
 
 import com.webnobis.mastermind.game.Game;
 
+import old.GameStore;
+
 public class GameStoreTest {
 	
 	private GameStore gameStore;

@@ -16,7 +16,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.webnobis.mastermind.game.Game;
+import com.webnobis.mastermind.model.OnlyForXmlBinding;
 
+@Deprecated
 @XmlRootElement(name = "game")
 public class XmlGame<E> {
 
@@ -49,7 +51,7 @@ public class XmlGame<E> {
 		this.tries = tries;
 	}
 
-	@OnlyForXmlTransformation
+	@OnlyForXmlBinding
 	XmlGame() {
 		this(null, false, new ArrayList<>(), new ArrayList<>());
 	}

@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.game.xml;
+package com.webnobis.mastermind.model;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.CONSTRUCTOR)
-public @interface OnlyForXmlTransformation {
+public @interface OnlyForXmlBinding {
 
 }

@@ -9,7 +9,8 @@ import java.util.stream.IntStream;
 import com.webnobis.mastermind.game.Game;
 import com.webnobis.mastermind.game.Result;
 import com.webnobis.mastermind.game.xml.XmlTry;
-import com.webnobis.mastermind.service.store.GameStore;
+
+import old.GameStore;
 
 public class GameFixture {
 

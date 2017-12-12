@@ -15,8 +15,8 @@ import org.junit.Test;
 
 import com.webnobis.mastermind.game.Result;
 import com.webnobis.mastermind.game.xml.XmlGame;
-import com.webnobis.mastermind.service.handler.GameHandler;
 
+import old.GameHandler;
 import ratpack.http.Status;
 import ratpack.http.client.ReceivedResponse;
 import ratpack.test.CloseableApplicationUnderTest;

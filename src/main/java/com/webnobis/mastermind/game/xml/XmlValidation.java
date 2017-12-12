@@ -8,7 +8,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.webnobis.mastermind.game.Result;
+import com.webnobis.mastermind.model.OnlyForXmlBinding;
 
+@Deprecated
 public class XmlValidation<E> {
 	
 	public static final Comparator<XmlValidation<?>> tryCountComparator = new Comparator<XmlValidation<?>>() {
@@ -34,7 +36,7 @@ public class XmlValidation<E> {
 		this.result = result;
 	}
 
-	@OnlyForXmlTransformation
+	@OnlyForXmlBinding
 	XmlValidation() {
 		this(0, new ArrayList<>(), new ArrayList<>());
 	}

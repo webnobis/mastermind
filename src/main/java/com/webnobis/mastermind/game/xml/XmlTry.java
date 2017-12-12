@@ -15,6 +15,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.stream.StreamSource;
 
+import com.webnobis.mastermind.model.OnlyForXmlBinding;
+
+@Deprecated
 @XmlRootElement(name = "try")
 public class XmlTry<E> {
 
@@ -43,7 +46,7 @@ public class XmlTry<E> {
 		}
 	}
 
-	@OnlyForXmlTransformation
+	@OnlyForXmlBinding
 	XmlTry() {
 		this(null, new ArrayList<>());
 	}
