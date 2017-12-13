@@ -1,0 +1,5 @@
+Synchrone Aufrufe:
+1. GameSupplier fragen nach neuem Game mit bestimmter Konfiguration - Response = neues Game
+2..n. Try zu diesem Game schicken - Response = Game mit allen Tries + Bewertungen (auch den Jetzigen) *)
+*) sobald gelöst, ist diese Lösung enthalten
+3. Aufgeben - Response ist die Lösung
