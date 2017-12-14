@@ -4,7 +4,7 @@ import com.webnobis.mastermind.model.GameWithSolution;
 
 public interface GameStore {
 	
-	void store(GameWithSolution game);
+	String store(GameWithSolution game);
 	
 	GameWithSolution find(String id);
 	

@@ -1,14 +1,11 @@
 package com.webnobis.mastermind.service.handler;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Function;
 
-import com.webnobis.mastermind.model.Game;
-import com.webnobis.mastermind.service.GameCreator;
-import com.webnobis.mastermind.service.MissingParameterException;
-import com.webnobis.mastermind.service.Transformer;
+import com.webnobis.mastermind.model.GameWithSolution;
+import com.webnobis.mastermind.model.Solution;
+import com.webnobis.mastermind.service.Constants;
 import com.webnobis.mastermind.service.store.GameStore;
 
 import ratpack.handling.Context;
@@ -16,34 +13,24 @@ import ratpack.handling.Handler;
 
 public class ResignHandler implements Handler {
 
-	public static final String ID_PARAM = "id";
-
-	private final String contentType;
-
 	private final GameStore gameStore;
 
-	private final Transformer<Solution, String> gameTransformer;
+	private final Function<Solution, String> solutionTransformer;
 
-	public ResignHandler(String contentType, GameCreator gameCreator, GameStore gameStore, Transformer<Game, String> gameTransformer) {
-		this.contentType = contentType;
-		this.gameCreator = gameCreator;
+	public ResignHandler(GameStore gameStore, Function<Solution, String> solutionTransformer) {
 		this.gameStore = gameStore;
-		this.gameTransformer = gameTransformer;
+		this.solutionTransformer = solutionTransformer;
 	}
 
 	@Override
 	public void handle(Context ctx) throws Exception {
-		Map<String, Integer> parameters = ctx.getRequest().getQueryParams().entrySet().stream()
-				.filter(entry -> keys.contains(entry.getKey()))
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> Integer.parseInt(entry.getValue())));
-		if (parameters.size() < keys.size()) {
-			throw new MissingParameterException(String.format("Request contains only query parameters %s, expected are %s.", parameters.keySet(), keys));
-		}
-
-		Game game = gameStore.store(gameCreator.create(parameters.get(MIN_PARAM), parameters.get(MAX_PARAM), parameters.get(SIZE_PARAM)));
-		ctx.getResponse()
-				.contentType(contentType)
-				.send(gameTransformer.transform(game));
+		Optional.ofNullable(ctx.getPathTokens().get(Constants.ID_TOKEN))
+				.map(gameStore::find)
+				.map(GameWithSolution::getSolution)
+				.map(solutionTransformer::apply)
+				.ifPresent(text -> ctx.getResponse()
+						.contentType(Constants.CONTENT_TYPE)
+						.send(text));
 	}
 
 }

@@ -2,8 +2,8 @@ package com.webnobis.mastermind.model;
 
 import java.util.List;
 
-public interface Solution {
+public interface Assessment {
 
-	List<Integer> getValues();
+	List<Result> getAssessments();
 	
 }

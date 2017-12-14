@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.model;
+package com.webnobis.mastermind.model.xml;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
