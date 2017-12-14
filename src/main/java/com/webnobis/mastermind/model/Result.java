@@ -1,6 +1,6 @@
 package com.webnobis.mastermind.model;
 
-public enum Verification {
+public enum Result {
 	
 	CORRECT_PLACE, CONTAINED;
 

@@ -9,13 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.webnobis.mastermind.service.SolutionFinder;
 
 @XmlRootElement
-public class Game {
-	
-	@XmlAttribute
-	private final String id;
-
-	@XmlElement
-	private final List<VerifiedTry> verifiedTries;
+public class Game extends AbstractPart<CheckedTry> {
 
 	@XmlElement(nillable = true)
 	private final Solution solution;
@@ -23,20 +17,15 @@ public class Game {
 	@XmlAttribute
 	private final boolean finish;
 
-	public Game(String id, List<VerifiedTry> verifiedTries) {
-		this.id = id;
-		this.verifiedTries = verifiedTries;
-		solution = SolutionFinder.findSolution(verifiedTries);
+	public Game(String id, List<CheckedTry> parts) {
+		super(id, parts);
+		solution = SolutionFinder.findSolution(parts);
 		finish = solution != null;
 	}
 
 	@OnlyForXmlBinding
 	Game() {
-		this(null,null);
-	}
-
-	public List<VerifiedTry> getVerifiedTries() {
-		return verifiedTries;
+		this(null, null);
 	}
 
 	public Solution getSolution() {
@@ -49,7 +38,7 @@ public class Game {
 
 	@Override
 	public String toString() {
-		return "Game [id=" + id + ", verifiedTries=" + verifiedTries + ", finish=" + finish + "]";
+		return "Game [getId()=" + getId() + ", isFinish()=" + isFinish() + ", getParts()=" + getParts() + "]";
 	}
 
 }

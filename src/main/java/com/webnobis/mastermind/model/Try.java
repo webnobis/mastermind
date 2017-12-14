@@ -1,33 +1,24 @@
 package com.webnobis.mastermind.model;
 
 import java.util.List;
-import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Try {
+public class Try extends AbstractPart<Integer> {
 
-	@XmlElement
-	private final List<Integer> parts;
-
-	public Try(List<Integer> parts) {
-		this.parts = Objects.requireNonNull(parts, "parts is null");
+	public Try(String id, List<Integer> parts) {
+		super(id, parts);
 	}
 
 	@OnlyForXmlBinding
 	Try() {
-		this(null);
-	}
-
-	public List<Integer> getParts() {
-		return parts;
+		this(null, null);
 	}
 
 	@Override
 	public String toString() {
-		return "Try [parts=" + parts + "]";
+		return "Try [getId()=" + getId() + ", getParts()=" + getParts() + "]";
 	}
-	
+
 }
