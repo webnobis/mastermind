@@ -3,3 +3,8 @@ Synchrone Aufrufe:
 2..n. Try zu diesem Game schicken - Response = Game mit allen Tries + Bewertungen (auch den Jetzigen) *)
 *) sobald gelöst, ist diese Lösung enthalten
 3. Aufgeben - Response ist die Lösung
+
+Stets Post-Request mit Xml-Body zum Auslösen von Aktionen.
+
+Maximalanzahl Games, danach Älteste löschen beim Neuanlegen.
+Älteste Finished Games werden zuerst gelöscht.
