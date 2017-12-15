@@ -10,8 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Deprecated
+@Ignore
 public class GameTest {
 	
 	private Game<Integer> game;

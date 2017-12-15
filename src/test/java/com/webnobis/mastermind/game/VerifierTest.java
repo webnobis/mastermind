@@ -13,8 +13,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Deprecated
+@Ignore
 public class VerifierTest {
 
 	private List<E> expected;

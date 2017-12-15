@@ -24,7 +24,7 @@ public class GameBuilder {
 	}
 
 	public GameWithSolution build(int min, int max, int size) {
-		return new XmlGameWithSolution(new XmlGame(null), new XmlSolution(createValues(min, max, size)));
+		return new XmlGameWithSolution(new XmlGame(null, null), new XmlSolution(createValues(min, max, size)));
 	}
 
 	private List<Integer> createValues(int min, int max, int size) {

@@ -9,11 +9,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.webnobis.mastermind.model.Game;
+import com.webnobis.mastermind.model.GameConfig;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.TryWithAssessment;
 
 @XmlRootElement
 public class XmlGame implements Game {
+
+	@XmlElement(name = "config")
+	private final GameConfig config;
 
 	@XmlElement
 	private final List<TryWithAssessment> tries;
@@ -21,7 +25,8 @@ public class XmlGame implements Game {
 	@XmlAttribute
 	private final boolean finish;
 
-	public XmlGame(List<TryWithAssessment> tries) {
+	public XmlGame(GameConfig config, List<TryWithAssessment> tries) {
+		this.config = config;
 		this.tries = Optional.ofNullable(tries)
 				.map(Collections::unmodifiableList)
 				.orElse(Collections.emptyList());
@@ -33,7 +38,12 @@ public class XmlGame implements Game {
 
 	@OnlyForXmlBinding
 	XmlGame() {
-		this(null);
+		this(null, null);
+	}
+
+	@Override
+	public GameConfig getConfig() {
+		return config;
 	}
 
 	@Override
