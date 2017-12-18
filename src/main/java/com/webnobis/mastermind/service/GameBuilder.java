@@ -2,6 +2,7 @@ package com.webnobis.mastermind.service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,7 +25,7 @@ public class GameBuilder {
 	}
 
 	public GameWithSolution build(int min, int max, int size) {
-		return new XmlGameWithSolution(new XmlGame(null), new XmlSolution(createValues(min, max, size)));
+		return new XmlGameWithSolution(UUID.randomUUID().toString(), new XmlGame(null, null), new XmlSolution(createValues(min, max, size)));
 	}
 
 	private List<Integer> createValues(int min, int max, int size) {

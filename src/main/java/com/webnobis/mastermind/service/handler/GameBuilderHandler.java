@@ -3,6 +3,7 @@ package com.webnobis.mastermind.service.handler;
 import java.util.function.Function;
 
 import com.webnobis.mastermind.model.GameConfig;
+import com.webnobis.mastermind.service.Constants;
 import com.webnobis.mastermind.service.GameBuilder;
 import com.webnobis.mastermind.service.store.GameStore;
 
@@ -11,8 +12,6 @@ import ratpack.handling.Handler;
 import ratpack.http.TypedData;
 
 public class GameBuilderHandler implements Handler {
-
-	static final int REDIRECT_TO_ID = 303;
 
 	private final GameBuilder gameBuilder;
 
@@ -34,7 +33,7 @@ public class GameBuilderHandler implements Handler {
 				.map(gameConfigTransformer::apply)
 				.map(config -> gameBuilder.build(config.getMin(), config.getMax(), config.getSize()))
 				.map(gameStore::store)
-				.then(id -> ctx.redirect(REDIRECT_TO_ID, id));
+				.then(id -> ctx.redirect(Constants.REDIRECT_CODE, id));
 	}
 
 }

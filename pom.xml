@@ -96,12 +96,12 @@
 		<dependency>
 			<groupId>io.ratpack</groupId>
 			<artifactId>ratpack-core</artifactId>
-			<version>1.4.2</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.ratpack</groupId>
 			<artifactId>ratpack-test</artifactId>
-			<version>1.4.2</version>
+			<version>1.5.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
