@@ -2,8 +2,8 @@ package com.webnobis.mastermind.service.handler;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.util.Collections;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -11,10 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.common.net.HostAndPort;
-import com.webnobis.mastermind.model.GameConfig;
 import com.webnobis.mastermind.model.GameWithSolution;
+import com.webnobis.mastermind.model.Try;
+import com.webnobis.mastermind.model.TryWithAssessment;
 import com.webnobis.mastermind.service.Constants;
-import com.webnobis.mastermind.service.GameBuilder;
 import com.webnobis.mastermind.service.store.GameStore;
 
 import mockit.Expectations;
@@ -25,15 +25,9 @@ import ratpack.test.handling.HandlingResult;
 import ratpack.test.handling.RequestFixture;
 
 @RunWith(JMockit.class)
-public class GameBuilderHandlerTest {
+public class TryHandlerTest {
 
-	private static final int MIN = 3;
-
-	private static final int MAX = 4;
-
-	private static final int SIZE = 5;
-
-	private static final String TEXT = "config as text";
+	private static final String TEXT = "try as text";
 
 	private static final String ADDRESS = "server:9999";
 
@@ -46,16 +40,25 @@ public class GameBuilderHandlerTest {
 	private static final String HEADER_KEY = "location";
 
 	@Mocked
-	private Function<String, GameConfig> gameConfigTransformer;
+	private Function<String, Try> tryTransformer;
 
 	@Mocked
-	private GameConfig gameConfig;
+	private Function<Try, TryWithAssessment> assessmentService;
 
 	@Mocked
-	private GameBuilder gameBuilder;
+	private BiFunction<GameWithSolution, TryWithAssessment, GameWithSolution> gameUpdateService;
 
 	@Mocked
-	private GameWithSolution gameWithSolution;
+	private Try theTry;
+
+	@Mocked
+	private TryWithAssessment tryWithAssessment;
+
+	@Mocked
+	private GameWithSolution gameWithSolution1;
+
+	@Mocked
+	private GameWithSolution gameWithSolution2;
 
 	@Mocked
 	private GameStore gameStore;
@@ -64,24 +67,20 @@ public class GameBuilderHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		handler = new GameBuilderHandler(gameBuilder, gameStore, gameConfigTransformer);
+		handler = new TryHandler(gameStore, tryTransformer, assessmentService, gameUpdateService);
 
 		new Expectations() {
 			{
-				gameConfig.getMin();
-				returns(MIN);
-				gameConfig.getMax();
-				returns(MAX);
-				gameConfig.getSize();
-				returns(SIZE);
+				gameStore.find(ID);
+				returns(gameWithSolution1);
 			}
 			{
-				gameConfigTransformer.apply(TEXT);
-				returns(gameConfig);
+				tryTransformer.apply(TEXT);
+				returns(theTry);
 			}
 			{
-				gameBuilder.build(MIN, MAX, SIZE);
-				returns(gameWithSolution);
+				assessmentService.apply(theTry);
+				returns(tryWithAssessment);
 			}
 		};
 	}
@@ -90,12 +89,17 @@ public class GameBuilderHandlerTest {
 	public void testHandle() throws Exception {
 		new Expectations() {
 			{
-				gameStore.store(gameWithSolution);
+				gameUpdateService.apply(gameWithSolution1, tryWithAssessment);
+				returns(gameWithSolution2);
+			}
+			{
+				gameStore.store(gameWithSolution2);
 				returns(ID);
 			}
 		};
 
 		HandlingResult result = RequestFixture.handle(handler, request -> request
+				.pathBinding(Collections.singletonMap(Constants.ID_TOKEN, ID))
 				.body(TEXT, Constants.CONTENT_TYPE)
 				.localAddress(HostAndPort.fromString(ADDRESS))
 				.uri(CALL_URI));
@@ -106,18 +110,19 @@ public class GameBuilderHandlerTest {
 
 	@Test
 	public void testHandleFailed() throws Exception {
-		UncheckedIOException e = new UncheckedIOException(new IOException());
+		IllegalStateException e = new IllegalStateException();
 		new Expectations() {
 			{
-				gameStore.store(gameWithSolution);
+				gameUpdateService.apply(gameWithSolution1, tryWithAssessment);
 				result = e;
 			}
 		};
 
 		HandlingResult result = RequestFixture.handle(handler, request -> request
+				.pathBinding(Collections.singletonMap(Constants.ID_TOKEN, ID))
 				.body(TEXT, Constants.CONTENT_TYPE));
 
-		assertEquals(e, result.exception(UncheckedIOException.class));
+		assertEquals(e, result.exception(IllegalStateException.class));
 	}
 
 }

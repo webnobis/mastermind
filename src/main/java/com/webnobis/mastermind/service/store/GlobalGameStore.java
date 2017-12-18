@@ -1,7 +1,6 @@
 package com.webnobis.mastermind.service.store;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.webnobis.mastermind.model.GameWithSolution;
@@ -14,9 +13,8 @@ public enum GlobalGameStore implements GameStore {
 
 	@Override
 	public String store(GameWithSolution game) {
-		String id = UUID.randomUUID().toString();
-		cache.put(id, game);
-		return id;
+		cache.put(game.getId(), game);
+		return game.getId();
 	}
 
 	@Override
