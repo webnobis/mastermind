@@ -9,6 +9,7 @@ import com.webnobis.mastermind.service.store.GameStore;
 
 import ratpack.handling.Context;
 
+@Path(":id/end")
 public class ResignHandler extends AbstractFindHandler {
 
 	private final Function<Solution, String> solutionTransformer;

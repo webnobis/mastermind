@@ -9,6 +9,7 @@ import com.webnobis.mastermind.service.store.GameStore;
 
 import ratpack.handling.Context;
 
+@Path(":id")
 public class GameHandler extends AbstractFindHandler {
 
 	private final Function<Game, String> gameTransformer;

@@ -11,6 +11,7 @@ import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.http.TypedData;
 
+@Path("")
 public class GameBuilderHandler implements Handler {
 
 	private final GameBuilder gameBuilder;
