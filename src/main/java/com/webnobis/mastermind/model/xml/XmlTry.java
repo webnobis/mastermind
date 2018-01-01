@@ -1,6 +1,6 @@
 package com.webnobis.mastermind.model.xml;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,12 +13,11 @@ import com.webnobis.mastermind.model.Try;
 public class XmlTry implements Try {
 
 	@XmlElement
-	private final List<Integer> ideas;
+	private final List<Integer> ideas = new ArrayList<>();
 
 	public XmlTry(List<Integer> ideas) {
-		this.ideas = Optional.ofNullable(ideas)
-				.map(Collections::unmodifiableList)
-				.orElse(Collections.emptyList());
+		Optional.ofNullable(ideas)
+				.ifPresent(this.ideas::addAll);
 	}
 
 	@OnlyForXmlBinding
@@ -29,6 +28,36 @@ public class XmlTry implements Try {
 	@Override
 	public List<Integer> getIdeas() {
 		return ideas;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ideas == null) ? 0 : ideas.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		XmlTry other = (XmlTry) obj;
+		if (ideas == null) {
+			if (other.ideas != null)
+				return false;
+		} else if (!ideas.equals(other.ideas))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "XmlTry [ideas=" + ideas + "]";
 	}
 
 }
