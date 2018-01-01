@@ -12,7 +12,6 @@ import com.webnobis.mastermind.service.store.GameStore;
 import ratpack.handling.Context;
 import ratpack.http.TypedData;
 
-@Path(":id/try")
 public class TryHandler extends AbstractFindHandler {
 
 	private final Function<String, Try> tryTransformer;

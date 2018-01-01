@@ -1,14 +1,13 @@
 package com.webnobis.mastermind.service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import static com.webnobis.mastermind.service.Constants.ALIVE_PATH;
+import static com.webnobis.mastermind.service.Constants.GAME_BUILDER_PATH;
+import static com.webnobis.mastermind.service.Constants.GAME_PATH;
+import static com.webnobis.mastermind.service.Constants.RESIGN_PATH;
+import static com.webnobis.mastermind.service.Constants.TRY_PATH;
 
 import com.webnobis.mastermind.service.handler.AliveHandler;
 import com.webnobis.mastermind.service.handler.GameBuilderHandler;
-import com.webnobis.mastermind.service.handler.GameHandler;
-import com.webnobis.mastermind.service.handler.Path;
-import com.webnobis.mastermind.service.handler.ResignHandler;
-import com.webnobis.mastermind.service.handler.TryHandler;
 
 import ratpack.api.UncheckedException;
 import ratpack.handling.Handler;
@@ -39,6 +38,31 @@ public class GameServer {
 
 	public static GameServer build() {
 		return null;
+		//return new GameServer(Env.INSTANCE, new AliveHandler(), new GameBuilderHandler(new GameBuilder(), gameStore, gameConfigTransformer), gameHandler, tryHandler, resignHandler);
+	}
+
+	Env getEnv() {
+		return env;
+	}
+
+	Handler getAliveHandler() {
+		return aliveHandler;
+	}
+
+	Handler getGameBuilderHandler() {
+		return gameBuilderHandler;
+	}
+
+	Handler getGameHandler() {
+		return gameHandler;
+	}
+
+	Handler getTryHandler() {
+		return tryHandler;
+	}
+
+	Handler getResignHandler() {
+		return resignHandler;
 	}
 
 	public RatpackServer buildServer() {
@@ -47,20 +71,14 @@ public class GameServer {
 					.serverConfig(config -> config
 							.port(env.getPort()))
 					.handlers(chain -> chain
-							.get(getPath(AliveHandler.class), aliveHandler)
-							.post(getPath(GameBuilderHandler.class), gameBuilderHandler)
-							.get(getPath(GameHandler.class), gameHandler)
-							.post(getPath(TryHandler.class), tryHandler)
-							.get(getPath(ResignHandler.class), resignHandler)));
+							.get(ALIVE_PATH, aliveHandler)
+							.post(GAME_BUILDER_PATH, gameBuilderHandler)
+							.get(GAME_PATH, gameHandler)
+							.post(TRY_PATH, tryHandler)
+							.get(RESIGN_PATH, resignHandler)));
 		} catch (Exception e) {
 			throw new UncheckedException(e);
 		}
-	}
-
-	private static String getPath(Class<? extends Handler> handler) {
-		return Optional.ofNullable(handler.getAnnotation(Path.class))
-				.map(Path::value)
-				.orElseThrow(() -> new NoSuchElementException("Missing annotation Path at Handler class " + handler.getSimpleName()));
 	}
 
 }

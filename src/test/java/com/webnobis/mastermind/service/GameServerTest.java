@@ -1,5 +1,10 @@
 package com.webnobis.mastermind.service;
 
+import static com.webnobis.mastermind.service.Constants.ALIVE_PATH;
+import static com.webnobis.mastermind.service.Constants.GAME_BUILDER_PATH;
+import static com.webnobis.mastermind.service.Constants.GAME_PATH;
+import static com.webnobis.mastermind.service.Constants.RESIGN_PATH;
+import static com.webnobis.mastermind.service.Constants.TRY_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -10,12 +15,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.webnobis.mastermind.service.handler.Path;
-
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.integration.junit4.JMockit;
-import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.http.Status;
 import ratpack.http.client.ReceivedResponse;
@@ -34,45 +36,15 @@ public class GameServerTest {
 
 	private static final String RESIGN = "resign";
 
-	private static Handler aliveHandler = new @Path(ALIVE) Handler() {
+	private static Handler aliveHandler = ctx -> ctx.render(ALIVE);
 
-		@Override
-		public void handle(Context ctx) throws Exception {
-			ctx.render(ALIVE);
-		}
-	};
+	private static Handler gameBuilderHandler = ctx -> ctx.render(GAME_BUILDER);
 
-	private static Handler gameBuilderHandler = new @Path(GAME_BUILDER) Handler() {
+	private static Handler gameHandler = ctx -> ctx.render(GAME);
 
-		@Override
-		public void handle(Context ctx) throws Exception {
-			ctx.render(GAME_BUILDER);
-		}
-	};
+	private static Handler tryHandler = ctx -> ctx.render(TRY);
 
-	private static Handler gameHandler = new @Path(GAME) Handler() {
-
-		@Override
-		public void handle(Context ctx) throws Exception {
-			ctx.render(GAME);
-		}
-	};
-
-	private static Handler tryHandler = new @Path(TRY) Handler() {
-
-		@Override
-		public void handle(Context ctx) throws Exception {
-			ctx.render(TRY);
-		}
-	};
-
-	private static Handler resignHandler = new @Path(RESIGN) Handler() {
-
-		@Override
-		public void handle(Context ctx) throws Exception {
-			ctx.render(RESIGN);
-		}
-	};
+	private static Handler resignHandler = ctx -> ctx.render(RESIGN);
 
 	@Mocked
 	private Env env;
@@ -109,11 +81,11 @@ public class GameServerTest {
 	@Test
 	public void testBuildServer() throws Exception {
 		ServerBackedApplicationUnderTest.of(server.buildServer()).test(client -> {
-			validateResponse(client.get(ALIVE), ALIVE);
-			validateResponse(client.post(GAME_BUILDER), GAME_BUILDER);
-			validateResponse(client.get(GAME), GAME);
-			validateResponse(client.post(TRY), TRY);
-			validateResponse(client.get(RESIGN), RESIGN);
+			validateResponse(client.get(ALIVE_PATH), ALIVE);
+			validateResponse(client.post(GAME_BUILDER_PATH), GAME_BUILDER);
+			validateResponse(client.get(GAME_PATH.replace(":", "1")), GAME);
+			validateResponse(client.post(TRY_PATH.replace(":", "2")), TRY);
+			validateResponse(client.get(RESIGN_PATH.replace(":", "3")), RESIGN);
 		});
 	}
 
