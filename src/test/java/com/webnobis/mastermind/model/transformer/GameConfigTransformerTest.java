@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXB;
@@ -14,12 +13,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.webnobis.mastermind.model.Try;
-import com.webnobis.mastermind.model.xml.XmlTry;
+import com.webnobis.mastermind.model.GameConfig;
+import com.webnobis.mastermind.model.xml.XmlGameConfig;
 
-public class TryTransformerTest {
+public class GameConfigTransformerTest {
 	
-	private Try theTry;
+	private GameConfig gameConfig;
 	
 	private Path tmpFile;
 	
@@ -27,10 +26,10 @@ public class TryTransformerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		theTry = new XmlTry(Arrays.asList(-1, 0, 1, Integer.MIN_VALUE, Integer.MAX_VALUE));
+		gameConfig = new XmlGameConfig(Integer.MIN_VALUE, 0, Integer.MAX_VALUE);
 		
-		tmpFile = Files.createTempFile(TryTransformerTest.class.getSimpleName(), ".tmp");
-		JAXB.marshal(theTry, Files.newBufferedWriter(tmpFile, StandardCharsets.UTF_8));
+		tmpFile = Files.createTempFile(GameConfigTransformerTest.class.getSimpleName(), ".tmp");
+		JAXB.marshal(gameConfig, Files.newBufferedWriter(tmpFile, StandardCharsets.UTF_8));
 		xml = Files.readAllLines(tmpFile, StandardCharsets.UTF_8).stream().collect(Collectors.joining());
 	}
 
@@ -41,7 +40,7 @@ public class TryTransformerTest {
 
 	@Test
 	public void testTransform() {
-		assertEquals(theTry, TryTransformer.transform(xml));
+		assertEquals(gameConfig, GameConfigTransformer.transform(xml));
 	}
 
 }
