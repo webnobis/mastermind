@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.webnobis.mastermind.model.Game;
@@ -16,10 +17,10 @@ import com.webnobis.mastermind.model.TryWithAssessment;
 @XmlRootElement
 public class XmlGame implements Game {
 
-	@XmlElement(name = "config")
+	@XmlElement(name = "config", type = GameConfig.class)
 	private final GameConfig config;
 
-	@XmlElement
+	@XmlElements(@XmlElement(type = XmlTryWithAssessment.class))
 	private final List<TryWithAssessment> tries;
 
 	@XmlAttribute

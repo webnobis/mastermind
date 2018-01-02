@@ -1,6 +1,6 @@
 package com.webnobis.mastermind.model.xml;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,12 +13,11 @@ import com.webnobis.mastermind.model.Solution;
 public class XmlSolution implements Solution {
 
 	@XmlElement
-	private final List<Integer> values;
+	private final List<Integer> values = new ArrayList<>();
 
 	public XmlSolution(List<Integer> values) {
-		this.values = Optional.ofNullable(values)
-				.map(Collections::unmodifiableList)
-				.orElse(Collections.emptyList());
+		Optional.ofNullable(values)
+				.ifPresent(this.values::addAll);
 	}
 
 	@OnlyForXmlBinding
@@ -29,6 +28,36 @@ public class XmlSolution implements Solution {
 	@Override
 	public List<Integer> getValues() {
 		return values;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((values == null) ? 0 : values.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		XmlSolution other = (XmlSolution) obj;
+		if (values == null) {
+			if (other.values != null)
+				return false;
+		} else if (!values.equals(other.values))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "XmlSolution [values=" + values + "]";
 	}
 
 }

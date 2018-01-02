@@ -10,10 +10,10 @@ import com.webnobis.mastermind.model.TryWithAssessment;
 @XmlRootElement
 public class XmlTryWithAssessment implements TryWithAssessment {
 
-	@XmlElement(name = "try")
+	@XmlElement(name = "try", type = XmlTry.class)
 	private final Try theTry;
 
-	@XmlElement
+	@XmlElement(type = XmlAssessment.class)
 	private final Assessment assessment;
 
 	public XmlTryWithAssessment(Try theTry, Assessment assessment) {

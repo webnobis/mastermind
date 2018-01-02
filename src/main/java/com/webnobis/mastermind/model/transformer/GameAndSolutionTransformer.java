@@ -16,19 +16,19 @@ public abstract class GameAndSolutionTransformer {
 	private GameAndSolutionTransformer() {
 	}
 
-	public String transform(Game game) {
+	public static String transform(Game game) {
 		return toXml(game);
 	}
 
-	public String transform(GameWithSolution gameWithSolution) {
+	public static String transform(GameWithSolution gameWithSolution) {
 		return toXml(gameWithSolution);
 	}
 
-	public String transform(Solution solution) {
+	public static String transform(Solution solution) {
 		return toXml(solution);
 	}
 
-	private String toXml(Object object) {
+	private static String toXml(Object object) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			JAXB.marshal(object, out);
 			return out.toString(StandardCharsets.UTF_8.name());

@@ -14,10 +14,10 @@ public class XmlGameWithSolution implements GameWithSolution {
 	@XmlAttribute
 	private final String id;
 
-	@XmlElement
+	@XmlElement(type = XmlGame.class)
 	private final Game game;
 
-	@XmlElement
+	@XmlElement(type = XmlSolution.class)
 	private final Solution solution;
 
 	public XmlGameWithSolution(String id, Game game, Solution solution) {
