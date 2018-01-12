@@ -47,21 +47,21 @@ public class GameAndSolutionTransformerTest {
 	public void testTransformGame() throws IOException {
 		Game game = createGame();
 		String xml = GameAndSolutionTransformer.transform(game);
-		assertEquals(game, toObject(xml, Game.class));
+		assertEquals(game, toObject(xml, XmlGame.class));
 	}
 
 	@Test
 	public void testTransformGameWithSolution() throws IOException {
 		GameWithSolution gameWithSolution = new XmlGameWithSolution("id 1", createGame(), createSolution());
 		String xml = GameAndSolutionTransformer.transform(gameWithSolution);
-		assertEquals(gameWithSolution, toObject(xml, GameWithSolution.class));
+		assertEquals(gameWithSolution, toObject(xml, XmlGameWithSolution.class));
 	}
 
 	@Test
 	public void testTransformSolution() throws IOException {
 		Solution solution = createSolution();
 		String xml = GameAndSolutionTransformer.transform(solution);
-		assertEquals(solution, toObject(xml, Solution.class));
+		assertEquals(solution, toObject(xml, XmlSolution.class));
 	}
 
 	private static Game createGame() {

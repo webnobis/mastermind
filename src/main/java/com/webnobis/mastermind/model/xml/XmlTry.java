@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.webnobis.mastermind.model.Try;
 
-@XmlRootElement
+@XmlRootElement(name = "try")
 public class XmlTry implements Try {
 
 	@XmlElement

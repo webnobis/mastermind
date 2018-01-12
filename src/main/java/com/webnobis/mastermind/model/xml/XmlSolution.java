@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.webnobis.mastermind.model.Solution;
 
-@XmlRootElement
+@XmlRootElement(name = "solution")
 public class XmlSolution implements Solution {
 
 	@XmlElement
