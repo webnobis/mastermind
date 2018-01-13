@@ -35,9 +35,6 @@ public class GameHandlerTest {
 	private Function<Game, String> gameTransformer;
 
 	@Mocked
-	private Function<GameWithSolution, String> finishedGameTransformer;
-
-	@Mocked
 	private Game game;
 
 	@Mocked
@@ -50,7 +47,7 @@ public class GameHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		handler = new GameHandler(gameStore, gameTransformer, finishedGameTransformer);
+		handler = new GameHandler(gameStore, gameTransformer);
 
 		new Expectations() {
 			{
@@ -68,10 +65,6 @@ public class GameHandlerTest {
 	public void testHandle() throws Exception {
 		new Expectations() {
 			{
-				game.isFinish();
-				returns(false);
-			}
-			{
 				gameTransformer.apply(game);
 				returns(TEXT1);
 			}
@@ -88,11 +81,7 @@ public class GameHandlerTest {
 	public void testHandleFinish() throws Exception {
 		new Expectations() {
 			{
-				game.isFinish();
-				returns(true);
-			}
-			{
-				finishedGameTransformer.apply(gameWithSolution);
+				gameTransformer.apply(game);
 				returns(TEXT2);
 			}
 		};
@@ -109,7 +98,7 @@ public class GameHandlerTest {
 		IllegalStateException e = new IllegalStateException();
 		new Expectations() {
 			{
-				game.isFinish();
+				gameTransformer.apply(game);
 				result = e;
 			}
 		};

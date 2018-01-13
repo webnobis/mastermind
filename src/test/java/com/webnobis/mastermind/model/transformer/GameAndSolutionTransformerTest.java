@@ -18,13 +18,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.webnobis.mastermind.model.Game;
-import com.webnobis.mastermind.model.GameWithSolution;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.Solution;
 import com.webnobis.mastermind.model.xml.XmlAssessment;
 import com.webnobis.mastermind.model.xml.XmlGame;
 import com.webnobis.mastermind.model.xml.XmlGameConfig;
-import com.webnobis.mastermind.model.xml.XmlGameWithSolution;
 import com.webnobis.mastermind.model.xml.XmlSolution;
 import com.webnobis.mastermind.model.xml.XmlTry;
 import com.webnobis.mastermind.model.xml.XmlTryWithAssessment;
@@ -51,13 +49,6 @@ public class GameAndSolutionTransformerTest {
 	}
 
 	@Test
-	public void testTransformGameWithSolution() throws IOException {
-		GameWithSolution gameWithSolution = new XmlGameWithSolution("id 1", createGame(), createSolution());
-		String xml = GameAndSolutionTransformer.transform(gameWithSolution);
-		assertEquals(gameWithSolution, toObject(xml, XmlGameWithSolution.class));
-	}
-
-	@Test
 	public void testTransformSolution() throws IOException {
 		Solution solution = createSolution();
 		String xml = GameAndSolutionTransformer.transform(solution);
@@ -73,7 +64,7 @@ public class GameAndSolutionTransformerTest {
 	private static Solution createSolution() {
 		return new XmlSolution(Arrays.asList(1, 2, 3));
 	}
-	
+
 	private <T> T toObject(String xml, Class<T> c) throws IOException {
 		Files.write(tmpFile, xml.getBytes(StandardCharsets.UTF_8));
 		return JAXB.unmarshal(Files.newBufferedReader(tmpFile, StandardCharsets.UTF_8), c);

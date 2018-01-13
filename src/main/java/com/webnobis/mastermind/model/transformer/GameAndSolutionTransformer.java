@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.bind.JAXB;
 
 import com.webnobis.mastermind.model.Game;
-import com.webnobis.mastermind.model.GameWithSolution;
 import com.webnobis.mastermind.model.Solution;
 
 public abstract class GameAndSolutionTransformer {
@@ -18,10 +17,6 @@ public abstract class GameAndSolutionTransformer {
 
 	public static String transform(Game game) {
 		return toXml(game);
-	}
-
-	public static String transform(GameWithSolution gameWithSolution) {
-		return toXml(gameWithSolution);
 	}
 
 	public static String transform(Solution solution) {
