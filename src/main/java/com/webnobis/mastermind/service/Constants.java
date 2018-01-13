@@ -8,7 +8,7 @@ public interface Constants {
 
 	public static final String ALIVE_PATH = "alive";
 
-	public static final String GAME_BUILDER_PATH = "";
+	public static final String GAME_BUILDER_PATH = "new";
 
 	public static final String GAME_PATH = ":id";
 
@@ -17,5 +17,7 @@ public interface Constants {
 	public static final String RESIGN_PATH = ":id/end";
 
 	public static final int REDIRECT_CODE = 303;
+
+	public static final int NOT_FOUND_CODE = 404;
 
 }

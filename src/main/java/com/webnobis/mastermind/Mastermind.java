@@ -14,8 +14,9 @@ public class Mastermind {
 		RatpackServer server = ratpackServerBuilder.get();
 		try {
 			server.start();
-		} finally {
+		} catch(Exception e) {
 			server.stop();
+			throw e;
 		}
 	}
 
