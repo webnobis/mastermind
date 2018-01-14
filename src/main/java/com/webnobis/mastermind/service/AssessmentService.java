@@ -1,7 +1,11 @@
 package com.webnobis.mastermind.service;
 
+import java.util.Collections;
+
 import com.webnobis.mastermind.model.Try;
 import com.webnobis.mastermind.model.TryWithAssessment;
+import com.webnobis.mastermind.model.xml.XmlAssessment;
+import com.webnobis.mastermind.model.xml.XmlTryWithAssessment;
 
 public abstract class AssessmentService {
 
@@ -9,7 +13,9 @@ public abstract class AssessmentService {
 	}
 
 	public static TryWithAssessment assess(Try theTry) {
-		return null;
+		// TODO correct assess logic
+
+		return new XmlTryWithAssessment(theTry, new XmlAssessment(Collections.emptyList()));
 	}
-	
+
 }
