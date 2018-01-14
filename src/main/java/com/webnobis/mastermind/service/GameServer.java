@@ -6,8 +6,15 @@ import static com.webnobis.mastermind.service.Constants.GAME_PATH;
 import static com.webnobis.mastermind.service.Constants.RESIGN_PATH;
 import static com.webnobis.mastermind.service.Constants.TRY_PATH;
 
+import com.webnobis.mastermind.model.transformer.GameAndSolutionTransformer;
+import com.webnobis.mastermind.model.transformer.GameConfigTransformer;
+import com.webnobis.mastermind.model.transformer.TryTransformer;
 import com.webnobis.mastermind.service.handler.AliveHandler;
 import com.webnobis.mastermind.service.handler.GameBuilderHandler;
+import com.webnobis.mastermind.service.handler.GameHandler;
+import com.webnobis.mastermind.service.handler.ResignHandler;
+import com.webnobis.mastermind.service.handler.TryHandler;
+import com.webnobis.mastermind.service.store.GlobalGameStore;
 
 import ratpack.api.UncheckedException;
 import ratpack.handling.Handler;
@@ -37,8 +44,11 @@ public class GameServer {
 	}
 
 	public static GameServer build() {
-		return null;
-		//return new GameServer(Env.INSTANCE, new AliveHandler(), new GameBuilderHandler(new GameBuilder(), gameStore, gameConfigTransformer), gameHandler, tryHandler, resignHandler);
+		return new GameServer(Env.INSTANCE, new AliveHandler(),
+				new GameBuilderHandler(new GameBuilder(), GlobalGameStore.INSTANCE, GameConfigTransformer::transform),
+				new GameHandler(GlobalGameStore.INSTANCE, GameAndSolutionTransformer::transform),
+				new TryHandler(GlobalGameStore.INSTANCE, TryTransformer::transform, AssessmentService::assess, GameUpdateService::update),
+				new ResignHandler(GlobalGameStore.INSTANCE, GameAndSolutionTransformer::transform));
 	}
 
 	Env getEnv() {

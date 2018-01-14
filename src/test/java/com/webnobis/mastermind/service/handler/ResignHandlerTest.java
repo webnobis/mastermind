@@ -3,7 +3,6 @@ package com.webnobis.mastermind.service.handler;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -85,6 +84,6 @@ public class ResignHandlerTest {
 		HandlingResult result = RequestFixture.handle(handler, request -> request
 				.pathBinding(Collections.singletonMap(Constants.ID_TOKEN, ID)));
 
-		assertEquals(NoSuchElementException.class, result.exception(NoSuchElementException.class).getClass());
+		assertEquals(Constants.NOT_FOUND_CODE, result.getStatus().getCode());
 	}
 }
