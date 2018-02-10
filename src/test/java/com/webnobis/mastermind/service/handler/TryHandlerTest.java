@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import com.google.common.net.HostAndPort;
 import com.webnobis.mastermind.model.GameWithSolution;
+import com.webnobis.mastermind.model.Solution;
 import com.webnobis.mastermind.model.Try;
 import com.webnobis.mastermind.model.TryWithAssessment;
 import com.webnobis.mastermind.service.Constants;
@@ -43,7 +44,7 @@ public class TryHandlerTest {
 	private Function<String, Try> tryTransformer;
 
 	@Mocked
-	private Function<Try, TryWithAssessment> assessmentService;
+	private BiFunction<Solution, Try, TryWithAssessment> assessmentService;
 
 	@Mocked
 	private BiFunction<GameWithSolution, TryWithAssessment, GameWithSolution> gameUpdateService;
@@ -79,7 +80,7 @@ public class TryHandlerTest {
 				returns(theTry);
 			}
 			{
-				assessmentService.apply(theTry);
+				assessmentService.apply(withInstanceOf(Solution.class), theTry);
 				returns(tryWithAssessment);
 			}
 		};

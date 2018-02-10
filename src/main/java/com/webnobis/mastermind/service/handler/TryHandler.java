@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.webnobis.mastermind.model.GameWithSolution;
+import com.webnobis.mastermind.model.Solution;
 import com.webnobis.mastermind.model.Try;
 import com.webnobis.mastermind.model.TryWithAssessment;
 import com.webnobis.mastermind.service.Constants;
@@ -16,11 +17,11 @@ public class TryHandler extends AbstractFindHandler {
 
 	private final Function<String, Try> tryTransformer;
 
-	private final Function<Try, TryWithAssessment> assessmentService;
+	private final BiFunction<Solution, Try, TryWithAssessment> assessmentService;
 
 	private final BiFunction<GameWithSolution, TryWithAssessment, GameWithSolution> gameUpdateService;
 
-	public TryHandler(GameStore gameStore, Function<String, Try> tryTransformer, Function<Try, TryWithAssessment> assessmentService,
+	public TryHandler(GameStore gameStore, Function<String, Try> tryTransformer, BiFunction<Solution, Try, TryWithAssessment> assessmentService,
 			BiFunction<GameWithSolution, TryWithAssessment, GameWithSolution> gameUpdateService) {
 		super(gameStore);
 		this.tryTransformer = tryTransformer;
@@ -34,7 +35,7 @@ public class TryHandler extends AbstractFindHandler {
 				.getBody()
 				.map(TypedData::getText)
 				.map(tryTransformer::apply)
-				.map(assessmentService::apply)
+				.map(theTry -> assessmentService.apply(gameWithSolution.getSolution(), theTry))
 				.map(tryWithAssessment -> gameUpdateService.apply(gameWithSolution, tryWithAssessment))
 				.map(gameStore::store)
 				.then(id -> ctx.redirect(Constants.REDIRECT_CODE, id));
