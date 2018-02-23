@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,13 +57,6 @@ public class GameServerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		new Expectations() {
-			{
-				env.getPort();
-				returns(9999);
-			}
-		};
-
 		server = new GameServer(env, aliveHandler, gameBuilderHandler, gameHandler, tryHandler, resignHandler);
 	}
 
@@ -72,7 +64,6 @@ public class GameServerTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Ignore // TODO successful after implementation
 	@Test
 	public void testBuild() {
 		assertNotNull(GameServer.build());
@@ -80,6 +71,13 @@ public class GameServerTest {
 
 	@Test
 	public void testBuildServer() throws Exception {
+		new Expectations() {
+			{
+				env.getPort();
+				returns(9999);
+			}
+		};
+
 		ServerBackedApplicationUnderTest.of(server.buildServer()).test(client -> {
 			validateResponse(client.get(ALIVE_PATH), ALIVE);
 			validateResponse(client.post(GAME_BUILDER_PATH), GAME_BUILDER);

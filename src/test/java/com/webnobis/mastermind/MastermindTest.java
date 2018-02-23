@@ -2,7 +2,6 @@ package com.webnobis.mastermind;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,7 +62,6 @@ public class MastermindTest {
 		}
 	}
 
-	@Ignore // TODO successful after implementation
 	@Test
 	public void testBuildRatpackServer() {
 		assertNotNull(Mastermind.buildRatpackServer());
