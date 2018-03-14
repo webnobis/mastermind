@@ -17,6 +17,9 @@ import com.webnobis.mastermind.service.handler.TryHandler;
 import com.webnobis.mastermind.service.store.GlobalGameStore;
 
 import ratpack.api.UncheckedException;
+import ratpack.error.ClientErrorHandler;
+import ratpack.error.ServerErrorHandler;
+import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.server.RatpackServer;
 
@@ -80,6 +83,9 @@ public class GameServer {
 			return RatpackServer.of(spec -> spec
 					.serverConfig(config -> config
 							.port(env.getPort()))
+					.registryOf(registry -> registry
+							.add(new ClientErrorThrowHandler())
+							.add(new ServerErrorThrowHandler()))
 					.handlers(chain -> chain
 							.get(ALIVE_PATH, aliveHandler)
 							.post(GAME_BUILDER_PATH, gameBuilderHandler)
@@ -89,6 +95,24 @@ public class GameServer {
 		} catch (Exception e) {
 			throw new UncheckedException(e);
 		}
+	}
+
+	class ClientErrorThrowHandler implements ClientErrorHandler {
+
+		@Override
+		public void error(Context context, int statusCode) throws Exception {
+			throw new IllegalStateException("client error " + statusCode);
+		}
+
+	}
+
+	class ServerErrorThrowHandler implements ServerErrorHandler {
+
+		@Override
+		public void error(Context context, Throwable throwable) throws Exception {
+			throw new IllegalStateException("server error " + throwable.getMessage());
+		}
+
 	}
 
 }

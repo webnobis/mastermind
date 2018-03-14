@@ -2,11 +2,13 @@ package com.webnobis.mastermind.service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.webnobis.mastermind.model.GameConfig;
 import com.webnobis.mastermind.model.GameWithSolution;
 import com.webnobis.mastermind.model.xml.XmlGame;
 import com.webnobis.mastermind.model.xml.XmlGameWithSolution;
@@ -35,8 +37,9 @@ public class GameBuilder {
 				.mapToInt(Long::intValue);
 	}
 
-	public GameWithSolution build(int min, int max, int size) {
-		return new XmlGameWithSolution(UUID.randomUUID().toString(), new XmlGame(null, null), new XmlSolution(createValues(min, max, size)));
+	public GameWithSolution build(GameConfig config) {
+		Objects.requireNonNull(config, "config is null");
+		return new XmlGameWithSolution(UUID.randomUUID().toString(), new XmlGame(config, null), new XmlSolution(createValues(config.getMin(), config.getMax(), config.getSize())));
 	}
 
 	List<Integer> createValues(int min, int max, int size) {

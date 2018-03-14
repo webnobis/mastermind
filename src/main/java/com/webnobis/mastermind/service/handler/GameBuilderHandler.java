@@ -31,7 +31,7 @@ public class GameBuilderHandler implements Handler {
 				.getBody()
 				.map(TypedData::getText)
 				.map(gameConfigTransformer::apply)
-				.map(config -> gameBuilder.build(config.getMin(), config.getMax(), config.getSize()))
+				.map(gameBuilder::build)
 				.map(gameStore::store)
 				.then(id -> ctx.redirect(Constants.REDIRECT_CODE, id));
 	}

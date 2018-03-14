@@ -25,25 +25,25 @@ public class GameBuilderTest {
 
 	@Test
 	public void testBuild() {
-		GameWithSolution gameWithSolution = builder.build(Integer.MIN_VALUE, Integer.MAX_VALUE, VALUES.size());
+		GameWithSolution gameWithSolution = builder.build(null);
 		assertEquals(VALUES, gameWithSolution.getSolution().getValues());
 	}
 
 	@Test
 	public void testBuildMax() {
 		int max = 2;
-		GameWithSolution gameWithSolution = builder.build(Integer.MIN_VALUE, Integer.MAX_VALUE, max);
+		GameWithSolution gameWithSolution = builder.build(null);
 		assertEquals(VALUES.subList(0, max), gameWithSolution.getSolution().getValues());
 	}
 
 	@Test
 	public void testBuildRange() {
 		{
-			GameWithSolution gameWithSolution = builder.build(-1, 99, Integer.MAX_VALUE);
+			GameWithSolution gameWithSolution = builder.build(null);
 			assertEquals(Collections.singletonList(0), gameWithSolution.getSolution().getValues());
 		}
 		{
-			GameWithSolution gameWithSolution = builder.build(0, 0, Integer.MAX_VALUE);
+			GameWithSolution gameWithSolution = builder.build(null);
 			assertEquals(Collections.singletonList(0), gameWithSolution.getSolution().getValues());
 		}
 	}
@@ -51,11 +51,11 @@ public class GameBuilderTest {
 	@Test
 	public void testBuildEmpty() {
 		{
-			GameWithSolution gameWithSolution = builder.build(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+			GameWithSolution gameWithSolution = builder.build(null);
 			assertEquals(Collections.emptyList(), gameWithSolution.getSolution().getValues());
 		}
 		{
-			GameWithSolution gameWithSolution = builder.build(Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+			GameWithSolution gameWithSolution = builder.build(null);
 			assertEquals(Collections.emptyList(), gameWithSolution.getSolution().getValues());
 		}
 	}
@@ -66,7 +66,7 @@ public class GameBuilderTest {
 			int min = -9;
 			int max = 12;
 			int size = 20;
-			GameWithSolution gameWithSolution = new GameBuilder().build(min, max, size);
+			GameWithSolution gameWithSolution = new GameBuilder().build(null);
 			List<Integer> values = gameWithSolution.getSolution().getValues();
 			assertEquals(size, values.size());
 			values.forEach(i -> {
@@ -75,11 +75,11 @@ public class GameBuilderTest {
 			});
 		}
 		{
-			GameWithSolution gameWithSolution = new GameBuilder().build(Integer.MIN_VALUE, Integer.MIN_VALUE, 10);
+			GameWithSolution gameWithSolution = new GameBuilder().build(null);
 			gameWithSolution.getSolution().getValues().forEach(i -> assertEquals(Integer.valueOf(Integer.MIN_VALUE), i));
 		}
 		{
-			GameWithSolution gameWithSolution = new GameBuilder().build(Integer.MAX_VALUE, Integer.MAX_VALUE, 10);
+			GameWithSolution gameWithSolution = new GameBuilder().build(null);
 			gameWithSolution.getSolution().getValues().forEach(i -> assertEquals(Integer.valueOf(Integer.MAX_VALUE), i));
 		}
 	}

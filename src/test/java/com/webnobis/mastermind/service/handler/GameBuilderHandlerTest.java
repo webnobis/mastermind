@@ -80,7 +80,7 @@ public class GameBuilderHandlerTest {
 				returns(gameConfig);
 			}
 			{
-				gameBuilder.build(MIN, MAX, SIZE);
+				gameBuilder.build(null);
 				returns(gameWithSolution);
 			}
 		};
