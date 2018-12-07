@@ -13,6 +13,7 @@ import mockit.integration.junit4.JMockit;
 import ratpack.api.UncheckedException;
 import ratpack.server.RatpackServer;
 
+@Ignore
 @RunWith(JMockit.class)
 public class MastermindTest {
 

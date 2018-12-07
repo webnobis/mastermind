@@ -2,8 +2,6 @@ package com.webnobis.mastermind;
 
 import java.util.function.Supplier;
 
-import com.webnobis.mastermind.service.GameServer;
-
 import ratpack.server.RatpackServer;
 
 public class Mastermind {
@@ -21,7 +19,7 @@ public class Mastermind {
 	}
 
 	static RatpackServer buildRatpackServer() {
-		return GameServer.build().buildServer();
+		return null;
 	}
 
 }
