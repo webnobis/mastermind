@@ -2,38 +2,39 @@ package com.webnobis.mastermind.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.webnobis.mastermind.model.Status;
 
-public class VerifyService<T> {
-	
-	private final List<T> solution;
-	
-	public VerifyService(List<T> solution) {
-		this.solution = solution;
+public interface VerifyService {
+
+	static <T> List<List<Status>> verifyAll(List<List<T>> nextTry, List<T> solution) {
+		return Objects.requireNonNull(nextTry).stream()
+				.map(tryItem -> verify(tryItem, solution))
+				.collect(Collectors.toList());
 	}
 
-	public List<Status> verify(List<T> nextTry) {
-		List<T> tmpSolution = new ArrayList<>(solution);
-		return IntStream.range(0, nextTry.size())
-			.mapToObj(i -> buildStatus(i, nextTry.get(i), tmpSolution))
-			.collect(Collectors.toList());
-		
+	static <T> List<Status> verify(List<T> nextTry, List<T> solution) {
+		List<T> tmpSolution = new ArrayList<>(Objects.requireNonNull(solution));
+		return IntStream.range(0, Objects.requireNonNull(nextTry).size()).mapToObj(i -> {
+			T nextTryPart = nextTry.get(i);
+			if (i < solution.size() && Optional.ofNullable(solution.get(i))
+					.map(value -> value.equals(nextTryPart))
+					.orElse(nextTryPart == null)) {
+				tmpSolution.remove(nextTryPart);
+				return Status.CORRECT_PLACE;
+			} else {
+				return (tmpSolution.remove(nextTryPart)) ? Status.CONTAINED : Status.MISSING;
+			}
+		}).collect(Collectors.toList());
 	}
-	
-	private Status buildStatus(int i, T nextTry, List<T> tmpSolution) {
-		if (i < solution.size() && solution.get(i).equals(nextTry)) {
-			tmpSolution.remove(nextTry);
-			return Status.CORRECT_PLACE;
-		} else {
-			return (tmpSolution.remove(nextTry))? Status.CONTAINED: Status.MISSING; 
-		}
-	}
-	
-	public boolean verifyFinish(List<T> nextTry) {
-		return solution.equals(nextTry);
+
+	static <T> boolean verifyFinish(List<List<T>> nextTry, List<T> solution) {
+		return Objects.requireNonNull(nextTry).stream()
+				.anyMatch(tryItem -> Objects.equals(tryItem, solution));
 	}
 
 }

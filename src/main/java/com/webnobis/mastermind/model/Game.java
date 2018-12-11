@@ -1,6 +1,7 @@
 package com.webnobis.mastermind.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Game<T> {
 	
@@ -8,14 +9,17 @@ public class Game<T> {
 	
 	private final List<T> solution;
 	
-	private final List<NextTry<T>> nextTry;
+	private final List<List<T>> nextTry;
+	
+	private final List<List<Status>> verify;
 	
 	private final boolean finish;
 
-	public Game(String id, List<T> solution, List<NextTry<T>> nextTry, boolean finish) {
-		this.id = id;
-		this.solution = solution;
-		this.nextTry = nextTry;
+	public Game(String id, List<T> solution, List<List<T>> nextTry, List<List<Status>> verify, boolean finish) {
+		this.id = Objects.requireNonNull(id);
+		this.solution = Objects.requireNonNull(solution);
+		this.nextTry = Objects.requireNonNull(nextTry);
+		this.verify = Objects.requireNonNull(verify);
 		this.finish = finish;
 	}
 
@@ -27,8 +31,12 @@ public class Game<T> {
 		return solution;
 	}
 
-	public List<NextTry<T>> getNextTry() {
+	public List<List<T>> getNextTry() {
 		return nextTry;
+	}
+
+	public List<List<Status>> getVerify() {
+		return verify;
 	}
 
 	public boolean isFinish() {
