@@ -1,25 +1,20 @@
 package com.webnobis.mastermind;
 
-import java.util.function.Supplier;
+import java.util.Collections;
 
-import ratpack.server.RatpackServer;
+import javax.xml.bind.JAXB;
+
+import com.webnobis.mastermind.model.Game;
+import com.webnobis.mastermind.service.GameService;
 
 public class Mastermind {
 
-	static Supplier<RatpackServer> ratpackServerBuilder = Mastermind::buildRatpackServer;
-
 	public static void main(String[] args) throws Exception {
-		RatpackServer server = ratpackServerBuilder.get();
-		try {
-			server.start();
-		} catch(Exception e) {
-			server.stop();
-			throw e;
-		}
+		JAXB.marshal(buildGame(), System.out);
 	}
 
-	static RatpackServer buildRatpackServer() {
-		return null;
+	static Game<Boolean> buildGame() {
+		return GameService.newGame(Collections.singletonList(true));
 	}
 
 }

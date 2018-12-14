@@ -64,7 +64,6 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 							return game.getId();
 						}
 
-						@SuppressWarnings("unchecked")
 						@Override
 						public Game<T> getValue() {
 							return game;
