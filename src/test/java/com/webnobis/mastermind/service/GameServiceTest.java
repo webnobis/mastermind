@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,10 +28,6 @@ public class GameServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		gameBefore = new Game<Boolean>(ID, SOLUTION, Collections.singletonList(SOLUTION), Collections.emptyList(), false);
-	}
-
-	@After
-	public void tearDown() throws Exception {
 	}
 
 	@Test
