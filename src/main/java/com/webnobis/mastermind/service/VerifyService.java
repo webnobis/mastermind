@@ -8,33 +8,28 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.webnobis.mastermind.model.Status;
+import com.webnobis.mastermind.model.Try;
 
 public interface VerifyService {
 
-	static <T> List<List<Status>> verifyAll(List<List<T>> nextTry, List<T> solution) {
-		return Objects.requireNonNull(nextTry).stream()
-				.map(tryItem -> verify(tryItem, solution))
-				.collect(Collectors.toList());
-	}
-
-	static <T> List<Status> verify(List<T> nextTry, List<T> solution) {
+	static <T> Try<T> verify(Try<T> nextTry, List<T> solution) {
 		List<T> tmpSolution = new ArrayList<>(Objects.requireNonNull(solution));
-		return IntStream.range(0, Objects.requireNonNull(nextTry).size()).mapToObj(i -> {
-			T nextTryPart = nextTry.get(i);
+		List<T> test = Objects.requireNonNull(nextTry).getTestParts();
+		return new Try<>(nextTry.getTimestamp(), test, IntStream.range(0, test.size()).mapToObj(i -> {
+			T nextTestPart = test.get(i);
 			if (i < solution.size() && Optional.ofNullable(solution.get(i))
-					.map(value -> value.equals(nextTryPart))
-					.orElse(nextTryPart == null)) {
-				tmpSolution.remove(nextTryPart);
+					.map(value -> value.equals(nextTestPart))
+					.orElse(nextTestPart == null)) {
+				tmpSolution.remove(nextTestPart);
 				return Status.CORRECT_PLACE;
 			} else {
-				return (tmpSolution.remove(nextTryPart)) ? Status.CONTAINED : Status.MISSING;
+				return (tmpSolution.remove(nextTestPart)) ? Status.CONTAINED : Status.MISSING;
 			}
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toList()));
 	}
 
-	static <T> boolean verifyFinish(List<List<T>> nextTry, List<T> solution) {
-		return Objects.requireNonNull(nextTry).stream()
-				.anyMatch(tryItem -> Objects.equals(tryItem, solution));
+	static <T> boolean verifyFinish(Try<T> nextTry, List<T> solution) {
+		return Objects.equals(Objects.requireNonNull(nextTry).getTestParts(), solution);
 	}
 
 }
