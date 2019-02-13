@@ -13,8 +13,9 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 
 import com.webnobis.mastermind.model.Game;
+import com.webnobis.mastermind.model.Trying;
 
-public class GameStore<T> extends AbstractMap<String, Game<T>> {
+public class GameStore<T> extends AbstractMap<String, Game<? extends Trying<T>,T>> {
 
 	static final String FILE_EXT = ".xml";
 
@@ -30,15 +31,15 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 	}
 
 	@Override
-	public Game<T> put(String key, Game<T> value) {
-		Game<T> game = get(key);
+	public Game<? extends Trying<T>,T> put(String key, Game<? extends Trying<T>,T> value) {
+		Game<? extends Trying<T>,T> game = get(key);
 		JAXB.marshal(Objects.requireNonNull(value), buildFile(key).toFile());
 		return game;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Game<T> get(Object key) {
+	public Game<? extends Trying<T>,T> get(Object key) {
 		Path file = buildFile(Objects.requireNonNull(key).toString());
 		if (Files.exists(file)) {
 			return JAXB.unmarshal(file.toFile(), Game.class);
@@ -48,7 +49,7 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 	}
 
 	@Override
-	public Set<Entry<String, Game<T>>> entrySet() {
+	public Set<Entry<String, Game<? extends Trying<T>,T>>> entrySet() {
 		try {
 			return Files.walk(folder)
 					.filter(Files::isRegularFile)
@@ -57,7 +58,7 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 					.map(Path::toString)
 					.map(name -> name.replace(FILE_EXT, ""))
 					.map(this::get)
-					.map(game -> new Map.Entry<String, Game<T>>() {
+					.map(game -> new Map.Entry<String, Game<? extends Trying<T>,T>>() {
 
 						@Override
 						public String getKey() {
@@ -65,12 +66,12 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 						}
 
 						@Override
-						public Game<T> getValue() {
+						public Game<? extends Trying<T>,T> getValue() {
 							return game;
 						}
 
 						@Override
-						public Game<T> setValue(Game<T> value) {
+						public Game<? extends Trying<T>,T> setValue(Game<? extends Trying<T>,T> value) {
 							throw new UnsupportedOperationException();
 						}
 
@@ -81,8 +82,8 @@ public class GameStore<T> extends AbstractMap<String, Game<T>> {
 	}
 
 	@Override
-	public Game<T> remove(Object key) {
-		Game<T> game = get(key);
+	public Game<? extends Trying<T>,T> remove(Object key) {
+		Game<? extends Trying<T>,T> game = get(key);
 		if (game != null) {
 			try {
 				Files.delete(buildFile(key.toString()));

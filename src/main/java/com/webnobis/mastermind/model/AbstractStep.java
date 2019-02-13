@@ -7,16 +7,16 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class AbstractStep<E extends Enum<E>> {
+public class AbstractStep<T> {
 
 	@XmlElement(type=ArrayList.class)
-	private final List<E> positions;
+	private final List<T> positions;
 
-	protected AbstractStep(List<E> positions) {
+	protected AbstractStep(List<T> positions) {
 		this.positions = Objects.requireNonNull(positions);
 	}
 
-	public List<E> getPositions() {
+	public List<T> getPositions() {
 		return positions;
 	}
 

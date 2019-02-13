@@ -1,9 +1,9 @@
 package com.webnobis.mastermind.model;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,17 +11,20 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(namespace = "http://www.webnobis.com/mastermind/game")
-public class Game<T extends Trying<E>, E extends Enum<E>> {
+public class Game<E extends Trying<T>, T> {
 
 	@XmlAttribute
 	private final String id;
+	
+	@XmlAttribute
+	private final Class<T> type;
 
 	@XmlElement
-	private final Solution<E> solution;
+	private final Solution<T> solution;
 
 	@XmlElementWrapper(name = "tryings")
-	@XmlElement(type = ArrayList.class)
-	private final List<T> tryings;
+	@XmlElement(type = TreeSet.class)
+	private final SortedSet<E> tryings;
 
 	@XmlAttribute
 	private final boolean finish;
@@ -31,11 +34,37 @@ public class Game<T extends Trying<E>, E extends Enum<E>> {
 		this(null, null, null, false);
 	}
 
-	public Game(String id, Solution<E> solution, List<T> tryings, boolean finish) {
+	public Game(String id, Solution<T> solution, SortedSet<E> tryings, boolean finish) {
 		this.id = Objects.requireNonNull(id);
 		this.solution = Objects.requireNonNull(solution);
+		this.type = getType(solution);
 		this.tryings = Objects.requireNonNull(tryings);
 		this.finish = finish;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Class<T> getType(Solution<T> solution) {
+		return solution.getPositions().stream().findAny().map(t -> (Class<T>)t.getClass()).orElseThrow(() -> new IllegalArgumentException("solution needs at least one position"));
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public Class<T> getType() {
+		return type;
+	}
+
+	public Solution<T> getSolution() {
+		return solution;
+	}
+
+	public SortedSet<E> getTryings() {
+		return tryings;
+	}
+
+	public boolean isFinish() {
+		return finish;
 	}
 
 	@Override

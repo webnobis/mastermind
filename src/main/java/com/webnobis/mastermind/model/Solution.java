@@ -2,9 +2,9 @@ package com.webnobis.mastermind.model;
 
 import java.util.List;
 
-public class Solution<E extends Enum<E>> extends AbstractStep<E> {
+public class Solution<T> extends AbstractStep<T> {
 
-	public Solution(List<E> positions) {
+	public Solution(List<T> positions) {
 		super(positions);
 	}
 

@@ -1,16 +1,16 @@
 package com.webnobis.mastermind.model;
 
-import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class VerifiedTrying<E extends Enum<E>> extends Trying<E> {
+public class VerifiedTrying<T> extends Trying<T> {
 	
 	@XmlElement
 	private final Verification verification;
 
-	public VerifiedTrying(int index, List<E> positions, Verification verification) {
-		super(index, positions);
+	public VerifiedTrying(Trying<T> trying, Verification verification) {
+		super(Objects.requireNonNull(trying).getIndex(), trying.getPositions());
 		this.verification = verification;
 	}
 
