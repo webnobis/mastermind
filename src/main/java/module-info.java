@@ -1,4 +1,4 @@
-module com.webnobis.alltime.Mastermind {
+module com.webnobis.mastermind.Mastermind {
 	
 	requires java.base;
 	
@@ -11,6 +11,6 @@ module com.webnobis.alltime.Mastermind {
 	requires javafx.graphics;
 	requires javafx.swing;
 	
-	exports com.webnobis.mastermind;
+	exports com.webnobis.mastermind.model;
 	
 }

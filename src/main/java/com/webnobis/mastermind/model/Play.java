@@ -14,7 +14,7 @@ public class Play<T> {
 
 	private final Source<T> source;
 
-	private Play(int rows, List<Result<T>> results, Source<T> source) {
+	Play(int rows, List<Result<T>> results, Source<T> source) {
 		this.rows = rows;
 		this.results = results;
 		this.source = source;
@@ -56,8 +56,7 @@ public class Play<T> {
 	}
 
 	public boolean isSolved() {
-		return results.stream().map(Result::getResults)
-				.anyMatch(list -> list.stream().filter(ResultType.EXACT::equals).count() == getCols());
+		return results.stream().map(Result::getResults).filter(list -> list.size() == getCols()).anyMatch(list -> list.stream().allMatch(ResultType.EXACT::equals));
 	}
 
 	@Override
