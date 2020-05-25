@@ -1,14 +1,15 @@
 package com.webnobis.mastermind.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class PlayState<T> {
-	
+public class PlayState<T extends Serializable> {
+
 	private final List<Result<T>> results;
 
 	private final boolean finish;
-	
+
 	private final boolean solved;
 
 	private PlayState(List<Result<T>> results, boolean finish, boolean solved) {
@@ -16,8 +17,8 @@ public class PlayState<T> {
 		this.finish = finish;
 		this.solved = solved;
 	}
-	
-	public static <T> PlayState<T> of(Play<T> play) {
+
+	public static <T extends Serializable> PlayState<T> of(Play<T> play) {
 		Objects.requireNonNull(play, "play is null");
 		return new PlayState<>(play.getResults(), play.isFinish(), play.isSolved());
 	}
