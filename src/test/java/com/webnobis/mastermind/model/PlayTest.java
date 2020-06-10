@@ -43,6 +43,7 @@ class PlayTest {
 	void testOf() {
 		Play<Boolean> newPlay = Play.of(Boolean.class, COLS);
 
+		assertNotNull(newPlay);
 		assertNotNull(newPlay.getId());
 		assertEquals(-1, newPlay.getRows());
 		assertNotNull(newPlay.getResults());
@@ -147,7 +148,7 @@ class PlayTest {
 		assertEquals(play, play.withAddedResult(null));
 		assertEquals(play, play.withAddedResult(Result.of(Source.of())));
 
-		assertNotEquals(play, null);
+		assertNotEquals(play, (Play<?>) null);
 		assertNotEquals(play, new Object());
 		assertNotEquals(Play.of(Boolean.class, COLS), Play.of(Boolean.class, COLS));
 	}
