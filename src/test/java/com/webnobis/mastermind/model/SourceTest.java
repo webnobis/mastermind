@@ -30,6 +30,7 @@ class SourceTest {
 
 	@Test
 	void testGetSources() {
+		assertNotNull(source.getSources());
 		assertTrue(source.getSources().isEmpty());
 	}
 
