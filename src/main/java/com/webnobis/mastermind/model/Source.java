@@ -1,17 +1,29 @@
 package com.webnobis.mastermind.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Source<T> {
 
 	static final int LIMIT = 20;
 
+	@XmlElement(name = "source")
 	private final List<T> sources;
 
+	// only for JAXB
+	Source() {
+		this(new ArrayList<>());
+	}
+
 	Source(List<T> sources) {
-		this.sources = sources;
+		this.sources = Objects.requireNonNull(sources, "sources is null");
 	}
 
 	@SafeVarargs

@@ -11,6 +11,8 @@ module com.webnobis.mastermind.Mastermind {
 	requires javafx.graphics;
 	requires javafx.swing;
 	
-	exports com.webnobis.mastermind.model;
+	exports com.webnobis.mastermind.service;
+	
+	opens com.webnobis.mastermind.model to java.xml.bind;
 	
 }

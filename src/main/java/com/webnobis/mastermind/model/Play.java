@@ -1,5 +1,6 @@
 package com.webnobis.mastermind.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -8,19 +9,42 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Play<T> {
 
+	@XmlAttribute
 	private final String id;
 
+	@XmlAttribute
 	private final Class<T> type;
 
+	@XmlAttribute
 	private final int cols;
 
+	@XmlAttribute
 	private final int rows;
 
+	@XmlElementWrapper(name = "results")
+	@XmlElement(name = "try")
 	private final List<Result<T>> results;
 
+	@XmlElement
 	private final Source<T> source;
+
+	// only for JAXB
+	Play() {
+		this.id = null;
+		this.type = null;
+		this.cols = 0;
+		this.rows = 0;
+		this.results = new ArrayList<>();
+		this.source = null;
+	}
 
 	Play(String id, Class<T> type, int cols, int rows, List<Result<T>> results, Source<T> source) {
 		this.id = Objects.requireNonNull(id, "id is null");
@@ -73,10 +97,12 @@ public class Play<T> {
 		return source;
 	}
 
+	@XmlElement(name = "finish")
 	public boolean isFinish() {
 		return isSolved() || (rows > -1 && results.size() >= rows);
 	}
 
+	@XmlElement(name = "solved")
 	public boolean isSolved() {
 		return results.stream().map(Result::getResults).filter(list -> list.size() == getCols())
 				.anyMatch(list -> list.stream().allMatch(ResultType.EXACT::equals));
