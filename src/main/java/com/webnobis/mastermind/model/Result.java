@@ -8,12 +8,23 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import com.webnobis.mastermind.service.AssessmentService;
+
+/**
+ * Result of a try
+ * 
+ * @author steffen
+ *
+ * @param <T> type of findings
+ */
 public class Result<T> extends Source<T> {
 
 	@XmlElement(name = "result")
 	private final List<ResultType> results;
 
-	// only for JAXB
+	/*
+	 * Only for JAXB
+	 */
 	Result() {
 		this(new ArrayList<>(), new ArrayList<>());
 	}
@@ -23,11 +34,26 @@ public class Result<T> extends Source<T> {
 		this.results = Objects.requireNonNull(results, "results is null");
 	}
 
+	/**
+	 * A new typed result with source and maximal source count result types
+	 * 
+	 * @param <T>         type of findings
+	 * @param source      source
+	 * @param resultTypes optional result types
+	 * @return new result
+	 */
+	@SafeVarargs
 	public static <T> Result<T> of(Source<T> source, ResultType... resultTypes) {
 		List<T> sources = Objects.requireNonNull(source, "source is null").getSources();
 		return new Result<>(sources, Arrays.stream(resultTypes).limit(sources.size()).collect(Collectors.toList()));
 	}
 
+	/**
+	 * Try results assessment answer
+	 * 
+	 * @return results
+	 * @see AssessmentService#assess(Source)
+	 */
 	public List<ResultType> getResults() {
 		return results;
 	}
