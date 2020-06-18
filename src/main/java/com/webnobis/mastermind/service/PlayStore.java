@@ -24,8 +24,7 @@ public interface PlayStore {
 	 * @param <T>  type of findings
 	 * @param file file containing a XML play
 	 * @return typed play
-	 * @throws UncheckedIOException if the file isn't readable or the XML
-	 *                              transformation fails
+	 * @throws UncheckedIOException if the file isn't readable
 	 * @see XmlTransformer#toModel(String, Class)
 	 */
 	@SuppressWarnings("unchecked")
@@ -42,8 +41,7 @@ public interface PlayStore {
 	 * 
 	 * @param play play
 	 * @param file file containing the play as XML
-	 * @throws UncheckedIOException if the file isn't writable or the XML
-	 *                              transformation fails
+	 * @throws UncheckedIOException if the file isn't writable
 	 * @see XmlTransformer#toXml(Object)
 	 */
 	static void store(Play<?> play, Path file) {

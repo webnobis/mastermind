@@ -2,11 +2,10 @@ package com.webnobis.mastermind.service;
 
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,8 +26,7 @@ public interface XmlTransformer {
 	 * @param xml       XML
 	 * @param modelType model type class
 	 * @return model
-	 * @throws UncheckedIOException if the the XML
-	 *                              transformation fails
+	 * @throws DataBindingException if the the XML transformation fails
 	 * @see JAXB#unmarshal(java.io.Reader, Class)
 	 */
 	static <T> T toModel(String xml, Class<T> modelType) {
@@ -42,23 +40,20 @@ public interface XmlTransformer {
 	 * 
 	 * @param model model
 	 * @return XML
-	 * @throws UncheckedIOException if the the XML
-	 *                              transformation fails
+	 * @throws DataBindingException if the the XML transformation fails
 	 * @see Marshaller#JAXB_ENCODING
 	 * @see Marshaller#marshal(Object, java.io.Writer)
 	 */
 	static String toXml(Object model) {
 		try (CharArrayWriter out = new CharArrayWriter()) {
-			try {
-				Marshaller marshaller = JAXBContext.newInstance(model.getClass()).createMarshaller();
-				marshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
-				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-				marshaller.marshal(model, out);
-			} catch (JAXBException e) {
-				throw new UncheckedIOException(new IOException(e));
-			}
+			Marshaller marshaller = JAXBContext.newInstance(model.getClass()).createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.marshal(model, out);
 			out.flush();
 			return out.toString();
+		} catch (JAXBException e) {
+			throw new DataBindingException(e);
 		}
 	}
 

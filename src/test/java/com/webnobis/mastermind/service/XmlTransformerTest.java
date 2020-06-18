@@ -3,8 +3,6 @@ package com.webnobis.mastermind.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.UncheckedIOException;
-
 import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXBElement;
 
@@ -41,7 +39,7 @@ class XmlTransformerTest {
 
 	@Test
 	void testTransformNoXmlType() {
-		assertThrows(UncheckedIOException.class, () -> XmlTransformer.toXml("no xml"));
+		assertThrows(DataBindingException.class, () -> XmlTransformer.toXml("no xml"));
 	}
 
 }
