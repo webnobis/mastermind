@@ -27,7 +27,8 @@ public interface XmlTransformer {
 	 * @param xml       XML
 	 * @param modelType model type class
 	 * @return model
-	 * 
+	 * @throws UncheckedIOException if the the XML
+	 *                              transformation fails
 	 * @see JAXB#unmarshal(java.io.Reader, Class)
 	 */
 	static <T> T toModel(String xml, Class<T> modelType) {
@@ -41,7 +42,8 @@ public interface XmlTransformer {
 	 * 
 	 * @param model model
 	 * @return XML
-	 * 
+	 * @throws UncheckedIOException if the the XML
+	 *                              transformation fails
 	 * @see Marshaller#JAXB_ENCODING
 	 * @see Marshaller#marshal(Object, java.io.Writer)
 	 */

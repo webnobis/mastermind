@@ -1,11 +1,12 @@
 package com.webnobis.mastermind.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +38,6 @@ class PlayStoreTest {
 		assertFalse(Files.readAllBytes(tmpFile).length > 0);
 		
 		PlayStore.store(PLAY, tmpFile);
-		
-		System.out.println(Files.readAllLines(tmpFile).stream().collect(Collectors.joining()));
 		
 		assertTrue(Files.readAllBytes(tmpFile).length > 0);
 		assertEquals(PLAY, PlayStore.load(tmpFile));

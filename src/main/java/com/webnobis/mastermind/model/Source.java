@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author steffen
  *
- * @param <T>
+ * @param <T> type of findings
  */
 @XmlRootElement
 public class Source<T> {
