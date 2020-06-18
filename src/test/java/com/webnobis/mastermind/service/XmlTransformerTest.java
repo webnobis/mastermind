@@ -1,6 +1,12 @@
 package com.webnobis.mastermind.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.UncheckedIOException;
+
+import javax.xml.bind.DataBindingException;
+import javax.xml.bind.JAXBElement;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,19 +25,23 @@ class XmlTransformerTest {
 	@Test
 	void testTransformSource() {
 		String xml = XmlTransformer.toXml(SOURCE);
-
-		System.out.println(xml);
-
 		assertEquals(SOURCE.getSources(), XmlTransformer.toModel(xml, Source.class).getSources());
 	}
 
 	@Test
 	void testTransformPlay() {
 		String xml = XmlTransformer.toXml(PLAY);
-
-		System.out.println(xml);
-
 		assertEquals(PLAY, XmlTransformer.toModel(xml, Play.class));
+	}
+
+	@Test
+	void testTransformNoXml() {
+		assertThrows(DataBindingException.class, () -> XmlTransformer.toModel("no xml", JAXBElement.class));
+	}
+
+	@Test
+	void testTransformNoXmlType() {
+		assertThrows(UncheckedIOException.class, () -> XmlTransformer.toXml("no xml"));
 	}
 
 }
