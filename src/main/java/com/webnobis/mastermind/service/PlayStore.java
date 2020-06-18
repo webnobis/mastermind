@@ -25,6 +25,7 @@ public interface PlayStore {
 	 * @param file file containing a XML play
 	 * @return typed play
 	 * @throws UncheckedIOException if the file isn't readable
+	 * @see Files#readString(Path)
 	 * @see XmlTransformer#toModel(String, Class)
 	 */
 	@SuppressWarnings("unchecked")
@@ -42,6 +43,7 @@ public interface PlayStore {
 	 * @param play play
 	 * @param file file containing the play as XML
 	 * @throws UncheckedIOException if the file isn't writable
+	 * @see Files#writeString(Path, CharSequence, java.nio.file.OpenOption...)
 	 * @see XmlTransformer#toXml(Object)
 	 */
 	static void store(Play<?> play, Path file) {

@@ -1,9 +1,9 @@
 package com.webnobis.mastermind.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,6 +12,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class PlayServiceTest {
 		assertNotNull(play2);
 		assertNotEquals(play, play2);
 
-		assertSame(2L, Files.walk(tmpFolder).map(file -> {
+		assertSame(2L, Files.walk(tmpFolder).filter(Files::isRegularFile).map(file -> {
 			try {
 				return Files.readString(file);
 			} catch (IOException e) {
@@ -96,20 +97,21 @@ class PlayServiceTest {
 	void testQuitPlay() {
 		Play<Short> play1 = playService.quitPlay(play.getId());
 
-		assertFalse(play.isFinish());
+		assertNull(play.getSource());
 
 		assertNotNull(play1);
 		assertEquals(play1.getId(), play1.getId());
-		assertTrue(play1.isFinish());
+		assertNotNull(play1.getSource());
 
-		assertEquals(play.isSolved(), play1.isSolved());
+		assertTrue(Stream.of(play.isFinish(), play1.isFinish(), play.isSolved(), play1.isSolved())
+				.allMatch(Boolean.FALSE::equals));
 	}
 
 	@Test
 	void testRemovePlay() throws IOException {
 		playService.removePlay(play.getId());
 
-		assertTrue(Files.walk(tmpFolder).map(file -> {
+		assertTrue(Files.walk(tmpFolder).filter(Files::isRegularFile).map(file -> {
 			try {
 				return Files.readString(file);
 			} catch (IOException e) {
