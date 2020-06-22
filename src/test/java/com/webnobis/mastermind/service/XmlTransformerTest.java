@@ -17,7 +17,7 @@ class XmlTransformerTest {
 
 	private static final Source<Boolean> SOURCE = Source.of(Boolean.TRUE, Boolean.FALSE);
 
-	private static final Play<Integer> PLAY = Play.of(Integer.class, 42).withSource(Source.of(17, 6, -19))
+	private static final Play<Integer> PLAY = Play.of(42, Source.of(17, 6, -19))
 			.withAddedResult(Result.of(Source.of(31), ResultType.PRESENT, ResultType.EXACT));
 
 	@Test

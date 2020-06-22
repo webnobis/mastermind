@@ -18,9 +18,10 @@ import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 
 class PlayStoreTest {
-	
-	private static final Play<Integer> PLAY = Play.of(Integer.class, 42).withSource(Source.of(17, 6, -19)).withAddedResult(Result.of(Source.of(31), ResultType.PRESENT, ResultType.EXACT));
-	
+
+	private static final Play<Integer> PLAY = Play.of(42, Source.of(17, 6, -19))
+			.withAddedResult(Result.of(Source.of(31), ResultType.PRESENT, ResultType.EXACT));
+
 	private Path tmpFile;
 
 	@BeforeEach
@@ -36,9 +37,9 @@ class PlayStoreTest {
 	@Test
 	void testStoreAndLoad() throws IOException {
 		assertFalse(Files.readAllBytes(tmpFile).length > 0);
-		
+
 		PlayStore.store(PLAY, tmpFile);
-		
+
 		assertTrue(Files.readAllBytes(tmpFile).length > 0);
 		assertEquals(PLAY, PlayStore.load(tmpFile));
 	}
