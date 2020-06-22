@@ -26,17 +26,18 @@ import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 
 class PlayServiceTest {
-	
+
 	private static final Source<Integer> SOURCE = Source.of(42);
 
 	private static final int COLS = 3;
-	
+
 	private static final IntFunction<Source<Integer>> SOLUTION_GENERATOR = cols -> {
 		assertSame(COLS, cols);
 		return SOURCE;
 	};
-	
-	private static final Function<Source<Integer>, Result<Integer>> ASSESSMENT_SERVICE = source -> Result.of(source, ResultType.PRESENT);
+
+	private static final Function<Source<Integer>, Result<Integer>> ASSESSMENT_SERVICE = source -> Result.of(source,
+			ResultType.PRESENT);
 
 	private Path tmpFolder;
 
@@ -72,6 +73,7 @@ class PlayServiceTest {
 
 		assertNotNull(play);
 		assertNotNull(play2);
+		assertNull(play2.getSource());
 		assertNotEquals(play, play2);
 
 		assertSame(2L, Files.walk(tmpFolder).filter(Files::isRegularFile).map(file -> {
@@ -88,6 +90,7 @@ class PlayServiceTest {
 		Play<Integer> play1 = playService.getPlay(play.getId());
 
 		assertNotNull(play1);
+		assertNull(play1.getSource());
 		assertEquals(play, play1);
 		assertEquals(play.getId(), play1.getId());
 	}
@@ -100,6 +103,7 @@ class PlayServiceTest {
 		assertTrue(play.getResults().isEmpty());
 
 		assertNotNull(play1);
+		assertNull(play1.getSource());
 		assertEquals(play1.getId(), play1.getId());
 		List<Result<Integer>> results = play1.getResults();
 		assertSame(1, results.size());
@@ -113,8 +117,8 @@ class PlayServiceTest {
 		assertNull(play.getSource());
 
 		assertNotNull(play1);
-		assertEquals(play1.getId(), play1.getId());
 		assertNotNull(play1.getSource());
+		assertEquals(play1.getId(), play1.getId());
 
 		assertTrue(Stream.of(play.isFinish(), play1.isFinish(), play.isSolved(), play1.isSolved())
 				.allMatch(Boolean.FALSE::equals));
