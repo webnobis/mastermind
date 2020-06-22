@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.webnobis.mastermind.model.Result;
@@ -17,14 +15,6 @@ import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 
 class AssessmentServiceTest {
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
 
 	@Test
 	void testAssessEmpty() {
@@ -56,6 +46,22 @@ class AssessmentServiceTest {
 	}
 
 	@Test
+	void testAssessOneNull() {
+		Source<Object> solutionSource = Source.of((Object) null);
+		Source<Object> trySourceNoMatch = Source.of(new Object());
+
+		Result<Object> result = AssessmentService.assess(solutionSource, trySourceNoMatch);
+		assertNotNull(result);
+		assertTrue(result.getResults().isEmpty());
+
+		result = AssessmentService.assess(solutionSource, solutionSource);
+		assertNotNull(result);
+		List<ResultType> results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.EXACT, results.iterator().next());
+	}
+
+	@Test
 	void testAssessTwo() {
 		Source<Boolean> solutionSource = Source.of(Boolean.TRUE, Boolean.FALSE);
 		Source<Boolean> trySourceNoMatch = Source.of(null, null);
@@ -77,6 +83,25 @@ class AssessmentServiceTest {
 		result = AssessmentService.assess(solutionSource, solutionSource);
 		assertNotNull(result);
 		assertTrue(result.getResults().stream().allMatch(ResultType.EXACT::equals));
+	}
+
+	@Test
+	void testAssessMin() {
+		Source<Boolean> solutionSource = Source.of(Boolean.TRUE, Boolean.FALSE);
+		Source<Boolean> trySourceShorter = Source.of(Boolean.TRUE);
+		Source<Boolean> trySourceLonger = Source.of(Boolean.FALSE, null, Boolean.TRUE);
+
+		Result<Boolean> result = AssessmentService.assess(solutionSource, trySourceShorter);
+		assertNotNull(result);
+		List<ResultType> results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.EXACT, results.iterator().next());
+
+		result = AssessmentService.assess(solutionSource, trySourceLonger);
+		assertNotNull(result);
+		results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.PRESENT, results.iterator().next());
 	}
 
 }
