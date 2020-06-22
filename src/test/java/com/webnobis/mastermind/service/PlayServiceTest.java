@@ -12,7 +12,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
@@ -36,8 +36,8 @@ class PlayServiceTest {
 		return SOURCE;
 	};
 
-	private static final Function<Source<Integer>, Result<Integer>> ASSESSMENT_SERVICE = source -> Result.of(source,
-			ResultType.PRESENT);
+	private static final BiFunction<Source<Integer>, Source<Integer>, Result<Integer>> ASSESSMENT_SERVICE = (source,
+			trySource) -> Result.of(trySource, ResultType.PRESENT);
 
 	private Path tmpFolder;
 
@@ -107,7 +107,10 @@ class PlayServiceTest {
 		assertEquals(play1.getId(), play1.getId());
 		List<Result<Integer>> results = play1.getResults();
 		assertSame(1, results.size());
-		assertEquals(source.getSources(), results.iterator().next().getSources());
+		Result<Integer> result = results.iterator().next();
+		assertEquals(source.getSources(), result.getSources());
+		assertSame(1, result.getResults().size());
+		assertEquals(ResultType.PRESENT, result.getResults().iterator().next());
 	}
 
 	@Test

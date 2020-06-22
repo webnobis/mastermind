@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 
 import com.webnobis.mastermind.model.Play;
@@ -30,7 +30,7 @@ public class PlayService<T> {
 
 	private final IntFunction<Source<T>> solutionGenerator;
 
-	private final Function<Source<T>, Result<T>> assessmentService;
+	private final BiFunction<Source<T>, Source<T>, Result<T>> assessmentService;
 
 	/**
 	 * Play service with root path persistent area, solution generator and
@@ -41,7 +41,7 @@ public class PlayService<T> {
 	 * @param assessmentService assessment service
 	 */
 	public PlayService(Path rootPath, IntFunction<Source<T>> solutionGenerator,
-			Function<Source<T>, Result<T>> assessmentService) {
+			BiFunction<Source<T>, Source<T>, Result<T>> assessmentService) {
 		this.rootPath = Objects.requireNonNull(rootPath, "rootPath is null");
 		this.solutionGenerator = Objects.requireNonNull(solutionGenerator, "solutionGenerator is null");
 		this.assessmentService = Objects.requireNonNull(assessmentService, "assessmentService is null");
@@ -88,17 +88,20 @@ public class PlayService<T> {
 	 * Assesses the next try and adds the result at the play and updates it, if
 	 * available and not quit
 	 * 
-	 * @param id     play id
-	 * @param source next try source
+	 * @param id        play id
+	 * @param trySource next try source
 	 * @return updated play, otherwise null
-	 * @see AssessmentService#assess(Source)
+	 * @see AssessmentService#assess(Source, Source)
 	 * @see Play#withAddedResult(com.webnobis.mastermind.model.Result)
 	 * @see PlayStore#store(Play, Path)
 	 * @see PlayService#quitPlay(String)
 	 */
-	public Play<T> nextTry(String id, Source<T> source) {
-		return Optional.ofNullable(loadPlay(id)).map(
-				play -> play.withAddedResult(assessmentService.apply(Objects.requireNonNull(source))).withoutSource())
+	public Play<T> nextTry(String id, Source<T> trySource) {
+		return Optional
+				.ofNullable(
+						loadPlay(id))
+				.map(play -> play.withAddedResult(assessmentService.apply(play.getSource(),
+						Objects.requireNonNull(trySource, "trySource is null"))).withoutSource())
 				.orElse(null);
 	}
 
