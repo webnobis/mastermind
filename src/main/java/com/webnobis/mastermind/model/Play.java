@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * @param <T> type of findings, such as numbers, colors, dogs and cats, or
  *            others
  */
-@XmlType(propOrder = { "id", "cols", "rows", "source", "finish", "solved", "results" })
+@XmlType(propOrder = { "id", "cols", "rows", "source", "unlimited", "finish", "solved", "results" })
 @XmlRootElement
 public class Play<T> {
 

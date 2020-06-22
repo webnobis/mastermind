@@ -7,52 +7,61 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.Source;
 
 /**
- * File system persistent play service
+ * File system persistent play service<br>
+ * Each method except quit gets the play without the solution source.
  * 
  * @author steffen
- 	 * @param <T>  type of findings
+ * 
+ * @param <T> type of findings
+ * @see PlayService#quitPlay(String)
  */
 public class PlayService<T> {
 
 	private static final String XML_FILE_EXT = ".xml";
 
 	private final Path rootPath;
-	
+
+	private final IntFunction<Source<T>> solutionGenerator;
+
 	private final Function<Source<T>, Result<T>> assessmentService;
 
 	/**
-	 * Play service with root path persistent area
+	 * Play service with root path persistent area, solution generator and
+	 * assessment service
 	 * 
-	 * @param rootPath root path
+	 * @param rootPath          root path
+	 * @param solutionGenerator solution generator
+	 * @param assessmentService assessment service
 	 */
-	public PlayService(Path rootPath) {
+	public PlayService(Path rootPath, IntFunction<Source<T>> solutionGenerator,
+			Function<Source<T>, Result<T>> assessmentService) {
 		this.rootPath = Objects.requireNonNull(rootPath, "rootPath is null");
+		this.solutionGenerator = Objects.requireNonNull(solutionGenerator, "solutionGenerator is null");
+		this.assessmentService = Objects.requireNonNull(assessmentService, "assessmentService is null");
 	}
 
 	/**
 	 * New unlimited persist play
 	 * 
-	 * @param type type class
 	 * @param cols columns, it's the count of searched findings
 	 * @return new play
 	 * @see Play#of(Class, int)
 	 * @see PlayStore#store(Play, Path)
 	 */
 	public Play<T> newPlay(int cols) {
-		return storePlay(Play.of(type, cols));
+		return storePlay(Play.of(cols, solutionGenerator.apply(cols))).withoutSource();
 	}
 
 	/**
 	 * New limited persist play
 	 * 
-	 * @param <T>  type of findings
-	 * @param type type class
 	 * @param cols columns, it's the count of searched findings
 	 * @param rows maximum try rows, until the Play is finish, in-depending the
 	 *             solution was found
@@ -60,27 +69,25 @@ public class PlayService<T> {
 	 * @see Play#of(Class, int, int)
 	 * @see PlayStore#store(Play, Path)
 	 */
-	public <T> Play<T> newPlay(Class<T> type, int cols, int rows) {
-		return storePlay(Play.of(type, cols, rows));
+	public Play<T> newPlay(int cols, int rows) {
+		return storePlay(Play.of(cols, rows, solutionGenerator.apply(cols))).withoutSource();
 	}
 
 	/**
 	 * Get the persist play, if available
 	 * 
-	 * @param <T> type of findings
-	 * @param id  play id
+	 * @param id play id
 	 * @return play, otherwise null
 	 * @see PlayStore#load(Path)
 	 */
-	public <T> Play<T> getPlay(String id) {
-		return PlayStore.load(buildFile(id));
+	public Play<T> getPlay(String id) {
+		return loadPlay(id).withoutSource();
 	}
 
 	/**
 	 * Assesses the next try and adds the result at the play and updates it, if
 	 * available and not quit
 	 * 
-	 * @param <T>    type of findings
 	 * @param id     play id
 	 * @param source next try source
 	 * @return updated play, otherwise null
@@ -89,9 +96,9 @@ public class PlayService<T> {
 	 * @see PlayStore#store(Play, Path)
 	 * @see PlayService#quitPlay(String)
 	 */
-	public <T> Play<T> nextTry(String id, Source<T> source) {
-		return Optional.<Play<T>>ofNullable(getPlay(id)).filter(play -> Objects.isNull(play.getSource()))
-				.map(play -> play.withAddedResult(AssessmentService.assess(Objects.requireNonNull(source))))
+	public Play<T> nextTry(String id, Source<T> source) {
+		return Optional.ofNullable(loadPlay(id)).map(
+				play -> play.withAddedResult(assessmentService.apply(Objects.requireNonNull(source))).withoutSource())
 				.orElse(null);
 	}
 
@@ -99,14 +106,13 @@ public class PlayService<T> {
 	 * Quits the play with the solution in-depending if it's finish or solved and
 	 * updates it, if available
 	 * 
-	 * @param <T> type of findings
-	 * @param id  play id
+	 * @param id play id
 	 * @return updated play, otherwise null
 	 * @see Play#withSource(Source)
 	 * @see PlayStore#store(Play, Path)
 	 */
-	public <T> Play<T> quitPlay(String id) {
-		return Optional.<Play<T>>ofNullable(getPlay(id)).orElse(null);
+	public Play<T> quitPlay(String id) {
+		return Optional.ofNullable(loadPlay(id)).orElse(null);
 	}
 
 	/**
@@ -129,7 +135,11 @@ public class PlayService<T> {
 		return rootPath.resolve(Objects.requireNonNull(id, "id is null").concat(XML_FILE_EXT));
 	}
 
-	private <T> Play<T> storePlay(Play<T> play) {
+	private Play<T> loadPlay(String id) {
+		return PlayStore.<T>load(buildFile(id));
+	}
+
+	private Play<T> storePlay(Play<T> play) {
 		PlayStore.store(play, buildFile(play.getId()));
 		return play;
 	}
