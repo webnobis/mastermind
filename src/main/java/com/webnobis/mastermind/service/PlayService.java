@@ -6,20 +6,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.webnobis.mastermind.model.Play;
+import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.Source;
 
 /**
  * File system persistent play service
  * 
  * @author steffen
+ 	 * @param <T>  type of findings
  */
-public class PlayService {
+public class PlayService<T> {
 
 	private static final String XML_FILE_EXT = ".xml";
 
 	private final Path rootPath;
+	
+	private final Function<Source<T>, Result<T>> assessmentService;
 
 	/**
 	 * Play service with root path persistent area
@@ -33,14 +38,13 @@ public class PlayService {
 	/**
 	 * New unlimited persist play
 	 * 
-	 * @param <T>  type of findings
 	 * @param type type class
 	 * @param cols columns, it's the count of searched findings
 	 * @return new play
 	 * @see Play#of(Class, int)
 	 * @see PlayStore#store(Play, Path)
 	 */
-	public <T> Play<T> newPlay(Class<T> type, int cols) {
+	public Play<T> newPlay(int cols) {
 		return storePlay(Play.of(type, cols));
 	}
 

@@ -22,8 +22,6 @@ class PlayTest {
 
 	private static final String ID = "the id";
 
-	private static final Class<Color> TYPE = Color.class;
-
 	private static final int COLS = 3;
 
 	private static final int ROWS = 2;
@@ -36,29 +34,27 @@ class PlayTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		play = new Play<>(ID, TYPE, COLS, ROWS, Collections.singletonList(TRY1), SOURCE);
+		play = new Play<>(ID, COLS, ROWS, Collections.singletonList(TRY1), SOURCE);
 	}
 
 	@Test
 	void testOf() {
-		Play<Boolean> newPlay = Play.of(Boolean.class, COLS);
+		Play<Color> newPlay = Play.of(COLS, SOURCE);
 
 		assertNotNull(newPlay);
 		assertNotNull(newPlay.getId());
 		assertEquals(-1, newPlay.getRows());
 		assertNotNull(newPlay.getResults());
 		assertTrue(newPlay.getResults().isEmpty());
-		assertNull(newPlay.getSource());
+		assertNotNull(newPlay.getSource());
 	}
 
 	@Test
 	void testOfNull() {
 		assertThrows(NullPointerException.class,
-				() -> new Play<Boolean>(null, Boolean.class, 1, 1, Collections.emptyList(), Source.of()));
-		assertThrows(NullPointerException.class,
-				() -> new Play<Byte>("id1", null, 1, 1, Collections.emptyList(), Source.of()));
-		assertThrows(NullPointerException.class, () -> new Play<Byte>("id1", Byte.class, 1, 1, null, Source.of()));
-		assertDoesNotThrow(() -> new Play<Short>("id1", Short.class, 1, 1, Collections.emptyList(), null));
+				() -> new Play<Boolean>(null, 1, 1, Collections.emptyList(), Source.of()));
+		assertThrows(NullPointerException.class, () -> new Play<Byte>("id1", 1, 1, null, Source.of()));
+		assertDoesNotThrow(() -> new Play<Short>("id1", 1, 1, Collections.emptyList(), null));
 	}
 
 	@Test
@@ -67,7 +63,6 @@ class PlayTest {
 		Play<Color> newPlay = play.withAddedResult(result);
 
 		assertEquals(play.getId(), newPlay.getId());
-		assertEquals(play.getType(), newPlay.getType());
 		assertSame(play.getCols(), newPlay.getCols());
 		assertSame(play.getRows(), newPlay.getRows());
 		assertEquals(play.getSource(), newPlay.getSource());
@@ -77,18 +72,13 @@ class PlayTest {
 	}
 
 	@Test
-	void testWithSource() {
-		assertNull(play.withSource(null).getSource());
+	void testWithoutSource() {
+		assertNull(play.withoutSource().getSource());
 	}
 
 	@Test
 	void testGetId() {
 		assertEquals(ID, play.getId());
-	}
-
-	@Test
-	void testGetType() {
-		assertEquals(TYPE, play.getType());
 	}
 
 	@Test
@@ -112,14 +102,21 @@ class PlayTest {
 
 	@Test
 	void testGetSource() {
-		assertEquals(SOURCE, play.withSource(SOURCE).getSource());
+		assertEquals(SOURCE, play.getSource());
+	}
+
+	@Test
+	void testIsUnlimited() {
+		assertFalse(play.isUnlimited());
+
+		assertTrue(Play.of(COLS, Source.of()).isUnlimited());
 	}
 
 	@Test
 	void testIsFinish() {
 		assertFalse(play.isFinish());
 
-		assertTrue(new Play<Object>("id 1", Object.class, COLS, ROWS,
+		assertTrue(new Play<Object>("id 1", COLS, ROWS,
 				Stream.generate(() -> Result.of(Source.of())).limit(ROWS).collect(Collectors.toList()), null)
 						.isFinish());
 
@@ -142,15 +139,14 @@ class PlayTest {
 	void testEquals() {
 		assertEquals(play, play);
 
-		assertEquals(play, play.withSource(null));
-		assertEquals(play, play.withSource(Source.of()));
+		assertEquals(play, play.withoutSource());
 
 		assertEquals(play, play.withAddedResult(null));
 		assertEquals(play, play.withAddedResult(Result.of(Source.of())));
 
 		assertNotEquals(play, (Play<?>) null);
 		assertNotEquals(play, new Object());
-		assertNotEquals(Play.of(Boolean.class, COLS), Play.of(Boolean.class, COLS));
+		assertNotEquals(Play.of(COLS, Source.of()), Play.of(COLS, Source.of()));
 	}
 
 	enum Color {
