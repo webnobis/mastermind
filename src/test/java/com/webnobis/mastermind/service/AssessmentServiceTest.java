@@ -1,137 +1,107 @@
 package com.webnobis.mastermind.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import com.webnobis.mastermind.model.Assessment;
 import com.webnobis.mastermind.model.Result;
-import com.webnobis.mastermind.model.Solution;
-import com.webnobis.mastermind.model.Try;
-import com.webnobis.mastermind.model.TryWithAssessment;
+import com.webnobis.mastermind.model.ResultType;
+import com.webnobis.mastermind.model.Source;
 
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.integration.junit4.JMockit;
-
-@RunWith(JMockit.class)
-public class AssessmentServiceTest {
-
-	@Mocked
-	private Solution solution;
-
-	@Mocked
-	private Try theTry;
-
-	@Mocked
-	private Assessment assessment;
+class AssessmentServiceTest {
 
 	@Test
-	public void testAssessMatchingSize() {
-		new Expectations() {
-			{
-				solution.getValues();
-				returns(Arrays.asList(null, 9, 9, 9, null));
-			}
-			{
-				theTry.getIdeas();
-				returns(Arrays.asList(8, null, 9, 7, null));
-			}
-			{
-				assessment.getAssessments();
-				returns(Arrays.asList(Result.CORRECT_PLACE, Result.CORRECT_PLACE, Result.CONTAINED));
-			}
-		};
+	void testAssessEmpty() {
+		Source<Object> solutionSource = Source.of();
+		Source<Object> trySource = Source.of();
 
-		TryWithAssessment result = AssessmentService.assess(solution, theTry);
+		Result<Object> result = AssessmentService.assess(solutionSource, trySource);
 		assertNotNull(result);
-		assertEquals(theTry.getIdeas(), result.getTry().getIdeas());
-		assertEquals(assessment.getAssessments(), result.getAssessment().getAssessments());
+		assertEquals(trySource.getSources(), result.getSources());
+		assertTrue(result.getResults().isEmpty());
 	}
 
 	@Test
-	public void testAssessNoMatchingSize() {
-		new Expectations() {
-			{
-				solution.getValues();
-				returns(Arrays.asList(1, 2, 3, 4));
-			}
-			{
-				theTry.getIdeas();
-				returns(Arrays.asList(1, 2, 3, 4, 5), Arrays.asList(1, 2, 3));
-			}
-			{
-				List<Result> results = Stream.generate(() -> Result.CORRECT_PLACE).limit(4).collect(Collectors.toList());
-				assessment.getAssessments();
-				returns(results, results.subList(0, 3));
-			}
-		};
+	void testAssessOne() {
+		Source<Boolean> solutionSource = Source.of(Boolean.TRUE);
+		Source<Boolean> trySource = Source.of(Boolean.FALSE);
 
-		{
-			TryWithAssessment result = AssessmentService.assess(solution, theTry);
-			assertNotNull(result);
-			assertEquals(theTry.getIdeas(), result.getTry().getIdeas());
-			assertEquals(assessment.getAssessments(), result.getAssessment().getAssessments());
-		}
-		{
-			TryWithAssessment result = AssessmentService.assess(solution, theTry);
-			assertNotNull(result);
-			assertEquals(theTry.getIdeas(), result.getTry().getIdeas());
-			assertEquals(assessment.getAssessments(), result.getAssessment().getAssessments());
-		}
-	}
-
-	@Test
-	public void testAssessEmpty() {
-		new Expectations() {
-			{
-				solution.getValues();
-				returns(Collections.emptyList());
-			}
-			{
-				theTry.getIdeas();
-				returns(Collections.emptyList());
-			}
-			{
-				assessment.getAssessments();
-				returns(Collections.emptyList());
-			}
-		};
-
-		TryWithAssessment result = AssessmentService.assess(solution, theTry);
+		Result<Boolean> result = AssessmentService.assess(solutionSource, trySource);
 		assertNotNull(result);
-		assertEquals(theTry.getIdeas(), result.getTry().getIdeas());
-		assertEquals(assessment.getAssessments(), result.getAssessment().getAssessments());
+		assertEquals(trySource.getSources(), result.getSources());
+		assertTrue(result.getResults().isEmpty());
+
+		result = AssessmentService.assess(solutionSource, solutionSource);
+		assertNotNull(result);
+		assertEquals(solutionSource.getSources(), result.getSources());
+		List<ResultType> results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.EXACT, results.iterator().next());
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testAssessSolutionNull() {
-		AssessmentService.assess(null, theTry);
+	@Test
+	void testAssessOneNull() {
+		Source<Object> solutionSource = Source.of((Object) null);
+		Source<Object> trySourceNoMatch = Source.of(new Object());
 
-		fail("NullPointerException expected");
+		Result<Object> result = AssessmentService.assess(solutionSource, trySourceNoMatch);
+		assertNotNull(result);
+		assertTrue(result.getResults().isEmpty());
+
+		result = AssessmentService.assess(solutionSource, solutionSource);
+		assertNotNull(result);
+		List<ResultType> results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.EXACT, results.iterator().next());
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testAssessTryNull() {
-		AssessmentService.assess(solution, null);
+	@Test
+	void testAssessTwo() {
+		Source<Boolean> solutionSource = Source.of(Boolean.TRUE, Boolean.FALSE);
+		Source<Boolean> trySourceNoMatch = Source.of(null, null);
+		Source<Boolean> trySourcePresent1 = Source.of(Boolean.FALSE, null);
+		Source<Boolean> trySourcePresent2 = Source.of(null, Boolean.TRUE);
 
-		fail("NullPointerException expected");
+		Result<Boolean> result = AssessmentService.assess(solutionSource, trySourceNoMatch);
+		assertNotNull(result);
+		assertTrue(result.getResults().isEmpty());
+
+		Stream.of(trySourcePresent1, trySourcePresent2)
+				.map(trySource -> AssessmentService.assess(solutionSource, trySource)).forEach(r -> {
+					assertNotNull(r);
+					List<ResultType> results = r.getResults();
+					assertSame(1, results.size());
+					assertEquals(ResultType.PRESENT, results.iterator().next());
+				});
+
+		result = AssessmentService.assess(solutionSource, solutionSource);
+		assertNotNull(result);
+		assertTrue(result.getResults().stream().allMatch(ResultType.EXACT::equals));
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testAssessSolutionAndTryNull() {
-		AssessmentService.assess(null, null);
+	@Test
+	void testAssessMin() {
+		Source<Boolean> solutionSource = Source.of(Boolean.TRUE, Boolean.FALSE);
+		Source<Boolean> trySourceShorter = Source.of(Boolean.TRUE);
+		Source<Boolean> trySourceLonger = Source.of(Boolean.FALSE, null, Boolean.TRUE);
 
-		fail("NullPointerException expected");
+		Result<Boolean> result = AssessmentService.assess(solutionSource, trySourceShorter);
+		assertNotNull(result);
+		List<ResultType> results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.EXACT, results.iterator().next());
+
+		result = AssessmentService.assess(solutionSource, trySourceLonger);
+		assertNotNull(result);
+		results = result.getResults();
+		assertSame(1, results.size());
+		assertEquals(ResultType.PRESENT, results.iterator().next());
 	}
 
 }
