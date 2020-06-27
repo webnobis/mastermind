@@ -1,7 +1,8 @@
 package com.webnobis.mastermind;
 
+import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.view.ColorType;
-import com.webnobis.mastermind.view.ColorTypeFactory;
+import com.webnobis.mastermind.view.SourcePane;
 
 import javafx.application.Application;
 import javafx.scene.control.Dialog;
@@ -30,7 +31,7 @@ public class Mastermind extends Application {
 		
 		
 		DialogPane dp = new DialogPane();
-		dp.setContent(ColorTypeFactory.create(ColorType.RED));
+		dp.setContent(SourcePane.create(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW)));
 		
 		Dialog<Object> d = new Dialog<>();
 		d.setDialogPane(dp);
