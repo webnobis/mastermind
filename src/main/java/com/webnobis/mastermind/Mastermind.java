@@ -1,12 +1,23 @@
 package com.webnobis.mastermind;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.webnobis.mastermind.model.Result;
+import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.view.ColorType;
-import com.webnobis.mastermind.view.SourcePane;
+import com.webnobis.mastermind.view.ResultsScrollPane;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 
 public class Mastermind extends Application {
@@ -31,9 +42,22 @@ public class Mastermind extends Application {
 		
 		
 		DialogPane dp = new DialogPane();
-		dp.setContent(SourcePane.create(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW)));
+		ScrollPane scrollPane = ResultsScrollPane.create(Stream.generate(() -> Result.of(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW), ResultType.EXACT, ResultType.EXACT, ResultType.PRESENT)).limit(10).collect(Collectors.toList()));
+		scrollPane.setPrefSize(200, 200);
+		dp.setContent(scrollPane);
+		//dp.setPrefWidth(dp.getContent().minWidth(0));
+		//dp.setOnScrollFinished(System.out::println);
+		scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				System.out.println(arg1 + "#" + arg2);
+				//dp.autosize();
+			}
+		});
 		
 		Dialog<Object> d = new Dialog<>();
+		d.setResizable(true);
 		d.setDialogPane(dp);
 		d.showAndWait();
 	}
