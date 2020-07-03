@@ -52,7 +52,7 @@ public class Mastermind extends Application {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				System.out.println(arg1 + "#" + arg2);
-				//dp.autosize();
+				dp.resize(dp.getWidth() + 1, dp.getHeight());
 			}
 		});
 		
