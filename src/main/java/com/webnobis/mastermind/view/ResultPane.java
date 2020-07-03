@@ -1,8 +1,12 @@
 package com.webnobis.mastermind.view;
 
+import java.util.Optional;
+
 import com.webnobis.mastermind.model.Result;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
@@ -12,9 +16,12 @@ public interface ResultPane {
 		HBox pane = new HBox();
 		pane.setPadding(new Insets(2));
 		pane.setSpacing(4);
-		pane.getChildren().add(SourcePane.create(result.getSources()));
-		pane.getChildren().add(ResultTypePane.create(result));
-		pane.setPrefWidth(pane.getChildren().stream().mapToDouble(node -> node.minWidth(50)).sum());
+		Optional.ofNullable(result).ifPresent(res -> {
+			ObservableList<Node> children = pane.getChildren();
+			children.add(SourcePane.create(result.getSources()));
+			children.add(ResultTypePane.create(result));
+//			pane.setPrefWidth(pane.getChildren().stream().mapToDouble(node -> node.minWidth(50)).sum());
+		});
 		return pane;
 	}
 
