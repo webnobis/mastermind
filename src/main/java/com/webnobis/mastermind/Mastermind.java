@@ -3,11 +3,18 @@ package com.webnobis.mastermind;
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.view.StatePane;
+import com.webnobis.mastermind.view.Updateable;
 
 import javafx.application.Application;
-import javafx.scene.control.Dialog;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Mastermind extends Application {
@@ -32,10 +39,10 @@ public class Mastermind extends Application {
 		
 		
 		DialogPane dp = new DialogPane();
-		Pane pane = StatePane.create(Play.of(7, Source.of()));
+		Updateable<TilePane, Play<?>> updateable = StatePane.create(Play.of(7, Source.of()));
 //		Pane pane = ResultsPane.create(Stream.generate(() -> Result.of(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW), ResultType.EXACT, ResultType.EXACT, ResultType.PRESENT)).limit(10).collect(Collectors.toList()));
 //		scrollPane.setPrefSize(200, 200);
-		dp.setContent(pane);
+		dp.setContent(updateable.getPane());
 		//dp.setPrefWidth(dp.getContent().minWidth(0));
 		//dp.setOnScrollFinished(System.out::println);
 //		scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
@@ -47,11 +54,16 @@ public class Mastermind extends Application {
 //			}
 //		});
 		
-		Dialog<Object> d = new Dialog<>();
-		d.setResizable(true);
-		d.setDialogPane(dp);
-		d.showAndWait();
-	}
+		Stage dialogStage = new Stage();
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+
+		VBox vbox = new VBox(new Text("Hi"), new Button("Ok."));
+		vbox.setAlignment(Pos.CENTER);
+		vbox.setPadding(new Insets(15));
+
+		dialogStage.setScene(new Scene(dp));
+		dialogStage.show();
+		}
 
 	
 
