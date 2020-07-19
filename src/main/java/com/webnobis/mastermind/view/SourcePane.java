@@ -20,7 +20,7 @@ public interface SourcePane {
 
 	static Pane create(List<ColorType> sources) {
 		HBox pane = new HBox();
-		pane.setPadding(new Insets(2));
+		pane.setPadding(new Insets(5));
 		pane.setSpacing(4);
 		pane.setAlignment(Pos.CENTER);
 		Optional.ofNullable(sources).map(List::stream).orElseGet(Stream::empty).map(ColorTypePin::create)

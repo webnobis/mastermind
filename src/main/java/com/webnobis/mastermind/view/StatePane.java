@@ -5,68 +5,56 @@ import java.util.Optional;
 
 import com.webnobis.mastermind.model.Play;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class StatePane implements Updateable<TilePane, Play<?>> {
+public class StatePane implements Updateable<GridPane, Play<?>> {
 
-	private final TilePane pane;
+	private final GridPane pane;
 
 	private final Label idLabel;
 
-	private final TextField id;
+	private final Label id;
 
 	private final Label stateLabel;
 
-	private final TextField state;
+	private final Label state;
 
 	private Label tryLabel;
 
-	private TextField freeTry;
+	private Label freeTry;
 
-	private StatePane() {
-		pane = new TilePane();
-		pane.setPadding(new Insets(2));
-		pane.setPrefColumns(2);
-		ObservableList<Node> children = pane.getChildren();
+	private StatePane(Play<?> play) {
+		pane = new GridPane();
+		pane.setPadding(new Insets(5));
+		pane.setHgap(5);
+		pane.setVgap(5);
 		idLabel = new Label(Msg.get("id.label"));
-		id = new TextField();
-		id.setEditable(false);
-		id.setBackground(idLabel.getBackground());
+		id = new Label();
 		stateLabel = new Label(Msg.get("state.label"));
-		state = new TextField();
-		state.setEditable(false);
+		state = new Label();
 		tryLabel = new Label(Msg.get("try.label"));
-		freeTry = new TextField();
-		freeTry.setEditable(false);
-		children.add(idLabel);
-		children.add(id);
-		children.add(stateLabel);
-		children.add(state);
-		children.add(tryLabel);
-		children.add(freeTry);
+		freeTry = new Label();
+		pane.add(idLabel, 0, 0);
+		pane.add(id, 1, 0, 2, 1);
+		pane.add(stateLabel, 0, 1);
+		pane.add(state, 1, 1, 2, 1);
+		pane.add(tryLabel, 0, 2);
+		pane.add(freeTry, 1, 2, 2, 1);
+		Optional.ofNullable(play).ifPresent(this::update);
 	}
 
-	public static Updateable<TilePane, Play<?>> create() {
-		return create(null);
-	}
-
-	public static Updateable<TilePane, Play<?>> create(Play<?> play) {
-		Updateable<TilePane, Play<?>> updateable = new StatePane();
-		Optional.ofNullable(play).ifPresent(updateable::update);
-		return updateable;
+	public static Updateable<GridPane, Play<?>> create(Play<?> play) {
+		return new StatePane(play);
 	}
 
 	@Override
-	public TilePane getPane() {
+	public GridPane getPane() {
 		return pane;
 	}
 

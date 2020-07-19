@@ -1,19 +1,17 @@
 package com.webnobis.mastermind;
 
 import com.webnobis.mastermind.model.Play;
+import com.webnobis.mastermind.model.Result;
+import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
-import com.webnobis.mastermind.view.StatePane;
+import com.webnobis.mastermind.view.ColorType;
+import com.webnobis.mastermind.view.PlayPane;
 import com.webnobis.mastermind.view.Updateable;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -39,10 +37,11 @@ public class Mastermind extends Application {
 		
 		
 		DialogPane dp = new DialogPane();
-		Updateable<TilePane, Play<?>> updateable = StatePane.create(Play.of(7, Source.of()));
+		Updateable<BorderPane, Play<ColorType>> updateable = PlayPane.create(Play.of(7, Source.of(ColorType.BLUE)).withAddedResult(Result.of(Source.of(ColorType.RED, ColorType.ORANGE), ResultType.PRESENT)));
 //		Pane pane = ResultsPane.create(Stream.generate(() -> Result.of(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW), ResultType.EXACT, ResultType.EXACT, ResultType.PRESENT)).limit(10).collect(Collectors.toList()));
 //		scrollPane.setPrefSize(200, 200);
 		dp.setContent(updateable.getPane());
+//		updateable.getPane().setPrefSize(400, 1000);
 		//dp.setPrefWidth(dp.getContent().minWidth(0));
 		//dp.setOnScrollFinished(System.out::println);
 //		scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
@@ -57,9 +56,9 @@ public class Mastermind extends Application {
 		Stage dialogStage = new Stage();
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 
-		VBox vbox = new VBox(new Text("Hi"), new Button("Ok."));
-		vbox.setAlignment(Pos.CENTER);
-		vbox.setPadding(new Insets(15));
+//		VBox vbox = new VBox(new Text("Hi"), new Button("Ok."));
+//		vbox.setAlignment(Pos.CENTER);
+//		vbox.setPadding(new Insets(15));
 
 		dialogStage.setScene(new Scene(dp));
 		dialogStage.show();
