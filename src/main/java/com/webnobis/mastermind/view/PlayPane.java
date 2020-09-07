@@ -1,67 +1,71 @@
 package com.webnobis.mastermind.view;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.webnobis.mastermind.model.Play;
-import com.webnobis.mastermind.model.Result;
+import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
-public class PlayPane implements Updateable<BorderPane, Play<ColorType>> {
+public class PlayPane<T> implements Consumer<Play<T>> {
 
-	private final Updateable<GridPane, Play<?>> stateUpdateable;
+	private final Function<List<T>, Pane> sourcesToPane;
 
-	private final GridPane playPane;
+	private final Function<List<ResultType>, Pane> resultsToPane;
 
-	private final BorderPane pane;
+	private final BiFunction<String, Boolean, Pane> stateToPane;
 
-	private PlayPane(Play<ColorType> play) {
-		stateUpdateable = StatePane.create(play);
+	private final BorderPane playPane;
 
-		playPane = new GridPane();
-		playPane.setPadding(new Insets(5));
+	public PlayPane(Consumer<Pane> paneBuilder, Function<List<T>, Pane> sourcesToPane,
+			Function<List<ResultType>, Pane> resultsToPane, BiFunction<String, Boolean, Pane> stateToPane) {
+		this.sourcesToPane = sourcesToPane;
+		this.resultsToPane = resultsToPane;
+		this.stateToPane = stateToPane;
 
-		pane = new BorderPane();
-		pane.setPadding(new Insets(2));
-		pane.setTop(stateUpdateable.getPane());
-		pane.setCenter(playPane);
-		Optional.ofNullable(play).ifPresent(this::update);
-	}
+		playPane = new BorderPane();
+		playPane.setPadding(new Insets(2));
 
-	public static Updateable<BorderPane, Play<ColorType>> create(Play<ColorType> play) {
-		return new PlayPane(play);
-	}
-
-	@Override
-	public BorderPane getPane() {
-		return pane;
+		paneBuilder.accept(playPane);
 	}
 
 	@Override
-	public void update(Play<ColorType> play) {
-		stateUpdateable.update(Objects.requireNonNull(play, "play is null"));
-
+	public void accept(Play<T> play) {
 		playPane.getChildren().clear();
-		IntStream.range(0, play.getResults().size()).forEach(row -> update(row, play.getResults().get(row)));
 
-		Optional.ofNullable(play.getSource()).filter(unused -> !play.getResults().isEmpty())
-				.ifPresent(source -> update(play.getResults().size(), source));
-	}
+		VBox statePane = new VBox();
+		statePane.setPadding(new Insets(2));
+		statePane.setSpacing(4);
+		statePane.getChildren().add(stateToPane.apply("ID: ".concat(play.getId()), null));
+		statePane.getChildren().add(stateToPane.apply("Unbegrenzt", play.isUnlimited()));
+		statePane.getChildren().add(stateToPane.apply("Gelöst", play.isSolved()));
+		statePane.getChildren().add(stateToPane.apply("Beendet", play.isFinish()));
+		playPane.setTop(statePane);
 
-	private void update(int row, Result<ColorType> result) {
-		playPane.add(SourcePane.create(result.getSources()), 0, row, 2, 1);
-		playPane.add(ResultTypePane.create(result), 2, row);
-	}
+		VBox resultsPane = new VBox();
+		resultsPane.setPadding(new Insets(2));
+		resultsPane.setSpacing(4);
+		play.getResults().forEach(result -> {
+			HBox pane = new HBox();
+			pane.setPadding(new Insets(2));
+			pane.setSpacing(4);
+			pane.getChildren().add(sourcesToPane.apply(result.getSources()));
+			pane.getChildren().add(resultsToPane.apply(result.getResults()));
+			resultsPane.getChildren().add(pane);
+		});
+		playPane.setCenter(resultsPane);
 
-	private void update(int row, Source<ColorType> source) {
-		playPane.add(SourcePane.create(source), 0, row, 2, 1);
-		playPane.add(new Label("Lösung"), 2, row);
+		Optional.ofNullable(play.getSource()).map(Source::getSources).map(sourcesToPane::apply)
+				.ifPresent(playPane::setBottom);
 	}
 
 }

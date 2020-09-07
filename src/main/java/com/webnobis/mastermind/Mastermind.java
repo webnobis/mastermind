@@ -6,12 +6,13 @@ import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.view.ColorType;
 import com.webnobis.mastermind.view.PlayPane;
-import com.webnobis.mastermind.view.Updateable;
+import com.webnobis.mastermind.view.ResultsToPane;
+import com.webnobis.mastermind.view.SourcesToPane;
+import com.webnobis.mastermind.view.StateToPane;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -37,10 +38,10 @@ public class Mastermind extends Application {
 		
 		
 		DialogPane dp = new DialogPane();
-		Updateable<BorderPane, Play<ColorType>> updateable = PlayPane.create(Play.of(7, Source.of(ColorType.BLUE)).withAddedResult(Result.of(Source.of(ColorType.RED, ColorType.ORANGE), ResultType.PRESENT)));
+		new PlayPane<ColorType>(dp::setContent, SourcesToPane::toColorTypePane, ResultsToPane::toColorTypePane, StateToPane::toPane).accept(Play.of(7, Source.of(ColorType.BLUE)).withAddedResult(Result.of(Source.of(ColorType.RED, ColorType.ORANGE, ColorType.ORANGE, ColorType.ORANGE), ResultType.PRESENT)));
 //		Pane pane = ResultsPane.create(Stream.generate(() -> Result.of(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW), ResultType.EXACT, ResultType.EXACT, ResultType.PRESENT)).limit(10).collect(Collectors.toList()));
 //		scrollPane.setPrefSize(200, 200);
-		dp.setContent(updateable.getPane());
+//		dp.setContent(updateable.getPane());
 //		updateable.getPane().setPrefSize(400, 1000);
 		//dp.setPrefWidth(dp.getContent().minWidth(0));
 		//dp.setOnScrollFinished(System.out::println);
