@@ -11,7 +11,9 @@ import com.webnobis.mastermind.view.SourcesToNode;
 import com.webnobis.mastermind.view.StateToNode;
 
 import javafx.application.Application;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.DialogPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,52 +26,33 @@ public class Mastermind extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-/*		Game<Trying<Integer>, Integer> game = GameService.newGame(new Solution<>(Arrays.asList(7,7,5,6)));
-		game = GameService.nextTrying(game, Arrays.asList(7,7,5,6));
-		game = GameService.nextTrying(game, Arrays.asList(8,7,5,6));*/
-		
-//		Game<Trying<Color>, Color> game = GameService.newGame(new Solution<>(Arrays.asList(Color.AQUAMARINE, Color.CHOCOLATE, Color.BEIGE, Color.OLIVE)));
-//		game = GameService.nextTrying(game, Arrays.asList(Color.YELLOW, Color.BEIGE, Color.CHOCOLATE));
-//		game = GameService.nextTrying(game, Arrays.asList(Color.AQUAMARINE, Color.CHOCOLATE, Color.BEIGE, Color.OLIVE));
-//		
-////		Dialog<Game<? extends Trying<Integer>, Integer>> dialog = new GameDialog<>(game);
-//		Dialog<Game<? extends Trying<Color>, Color>> dialog = new GameDialog<>(GameService.verify(game));
-//		dialog.showAndWait();
-		
-		
+
 		DialogPane dp = new DialogPane();
-		
-		new PlayPane<ColorType>(dp::setContent, SourcesToNode::toColorTypeNode, ResultsToNode::toResultTypeNode, StateToNode::toStateNode)
-		.accept(Play.of(7, Source.of(ColorType.BLUE))
-				.withAddedResult(Result.of(Source.of(ColorType.RED, ColorType.ORANGE, ColorType.ORANGE, ColorType.ORANGE), ResultType.PRESENT))
-		.withAddedResult(Result.of(Source.of(ColorType.BLUE, ColorType.ORANGE, ColorType.ORANGE, ColorType.ORANGE), ResultType.PRESENT, ResultType.EXACT))
-		.withAddedResult(Result.of(Source.of(ColorType.RED, ColorType.GREEN, ColorType.ORANGE, ColorType.ORANGE), ResultType.PRESENT, ResultType.PRESENT, ResultType.PRESENT, ResultType.PRESENT)));
-//		Pane pane = ResultsPane.create(Stream.generate(() -> Result.of(Source.of(ColorType.RED, ColorType.HOLE, ColorType.RED, ColorType.YELLOW), ResultType.EXACT, ResultType.EXACT, ResultType.PRESENT)).limit(10).collect(Collectors.toList()));
-//		scrollPane.setPrefSize(200, 200);
-//		dp.setContent(updateable.getPane());
-//		updateable.getPane().setPrefSize(400, 1000);
-		//dp.setPrefWidth(dp.getContent().minWidth(0));
-		//dp.setOnScrollFinished(System.out::println);
-//		scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				System.out.println(arg1 + "#" + arg2);
-//				dp.resize(dp.getWidth() + 1, dp.getHeight());
-//			}
-//		});
-		
+
+		new PlayPane<ColorType>(dp::setContent, SourcesToNode::toColorTypeNode, ResultsToNode::toResultTypeNode,
+				StateToNode::toStateNode)
+						.accept(Play.of(7, Source.of(ColorType.BLUE))
+								.withAddedResult(Result.of(
+										Source.of(ColorType.RED, ColorType.ORANGE, ColorType.ORANGE, ColorType.ORANGE),
+										ResultType.PRESENT))
+								.withAddedResult(Result.of(
+										Source.of(ColorType.BLUE, ColorType.ORANGE, ColorType.ORANGE, ColorType.ORANGE),
+										ResultType.PRESENT, ResultType.EXACT))
+								.withAddedResult(
+										Result.of(
+												Source.of(ColorType.RED, ColorType.GREEN, ColorType.ORANGE,
+														ColorType.ORANGE),
+												ResultType.PRESENT, ResultType.PRESENT, ResultType.PRESENT,
+												ResultType.PRESENT)));
+
 		Stage dialogStage = new Stage();
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setTitle("Mastermind 2.0");
 
-//		VBox vbox = new VBox(new Text("Hi"), new Button("Ok."));
-//		vbox.setAlignment(Pos.CENTER);
-//		vbox.setPadding(new Insets(15));
-
-		dialogStage.setScene(new Scene(dp));
+		Scene scene = new Scene(dp, dp.getPrefWidth(), dp.getPrefHeight(), true, SceneAntialiasing.BALANCED);
+		scene.setCamera(new PerspectiveCamera());
+		dialogStage.setScene(scene);
 		dialogStage.show();
-		}
-
-	
+	}
 
 }

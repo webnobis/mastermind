@@ -4,14 +4,13 @@ import java.util.Objects;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.Sphere;
 
 public interface ColorTypePin {
 
-	static final double BIG = 12.0;
+	static final double BIG = 18.0;
 
-	static final double SMALL = 6.0;
+	static final double SMALL = 8.0;
 
 	static Sphere create(ColorType colorType) {
 		double radius = BIG;
@@ -31,9 +30,13 @@ public interface ColorTypePin {
 			}
 		}
 		Sphere pin = new Sphere(radius);
-		pin.setDrawMode(DrawMode.FILL);
-		pin.setOpacity(30);
+//		pin.setDrawMode(DrawMode.FILL);
+//		pin.setOpacity(30);
+//		pin.setCache(true);
+//		pin.setCullFace(CullFace.BACK);
+//		pin.setPickOnBounds(true);
 		pin.setMaterial(new PhongMaterial(color));
+
 		return pin;
 	}
 

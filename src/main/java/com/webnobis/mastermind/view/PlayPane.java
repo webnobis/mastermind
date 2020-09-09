@@ -46,7 +46,9 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 		VBox statePane = new VBox();
 		// statePane.setPadding(new Insets(2));
 		statePane.setSpacing(4);
+		statePane.getChildren().add(new Label("Id:"));
 		statePane.getChildren().add(stateToNode.apply("ID: ".concat(play.getId()), null));
+		statePane.getChildren().add(new Label("Status:"));
 		statePane.getChildren().add(stateToNode.apply("Unbegrenzt", play.isUnlimited()));
 		statePane.getChildren().add(stateToNode.apply("Gelöst", play.isSolved()));
 		statePane.getChildren().add(stateToNode.apply("Beendet", play.isFinish()));
