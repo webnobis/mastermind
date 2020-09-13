@@ -5,6 +5,7 @@ import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.view.ColorType;
+import com.webnobis.mastermind.view.PlayMenu;
 import com.webnobis.mastermind.view.PlayPane;
 import com.webnobis.mastermind.view.ResultsToNode;
 import com.webnobis.mastermind.view.SourcesToNode;
@@ -14,7 +15,7 @@ import javafx.application.Application;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.DialogPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -26,10 +27,21 @@ public class Mastermind extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		VBox playPane = new VBox();
+		
+		/*
+		 * Menu-Items werden beim Anklicken nicht angezeigt. Das Mouse-Klicken ist deaktiviert.
+		 * Das ist immer so, wenn Sphere verwendet wird, egal ob in Group, einem Extra-Pane oder so.
+		 * Nur wenn Sphere nicht vorhanden ist, läßt sich das Menu mit der Mouse bedienen.
+		 * Mit Tasten geht es jedoch immer: ALT + Nach unten
+		 * Irgendwie scheinen Mouse-Events bei Sphere abgeschaltet zu sein...
+		 */
+		
+		PlayMenu.addMenu(playPane, (event, command) -> {
+			System.out.println(command);
+		});
 
-		DialogPane dp = new DialogPane();
-
-		new PlayPane<ColorType>(dp::setContent, SourcesToNode::toColorTypeNode, ResultsToNode::toResultTypeNode,
+		new PlayPane<ColorType>(playPane.getChildren()::add, SourcesToNode::toColorTypeNode, ResultsToNode::toResultTypeNode,
 				StateToNode::toStateNode)
 						.accept(Play.of(7, Source.of(ColorType.BLUE))
 								.withAddedResult(Result.of(
@@ -48,8 +60,9 @@ public class Mastermind extends Application {
 		Stage dialogStage = new Stage();
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setTitle("Mastermind 2.0");
+ 		dialogStage.centerOnScreen();
 
-		Scene scene = new Scene(dp, dp.getPrefWidth(), dp.getPrefHeight(), true, SceneAntialiasing.BALANCED);
+		Scene scene = new Scene(playPane, playPane.getPrefWidth(), playPane.getPrefHeight(), true, SceneAntialiasing.BALANCED);
 		scene.setCamera(new PerspectiveCamera());
 		dialogStage.setScene(scene);
 		dialogStage.show();

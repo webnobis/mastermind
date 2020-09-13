@@ -36,7 +36,6 @@ public interface ColorTypePin {
 //		pin.setCullFace(CullFace.BACK);
 //		pin.setPickOnBounds(true);
 		pin.setMaterial(new PhongMaterial(color));
-
 		return pin;
 	}
 

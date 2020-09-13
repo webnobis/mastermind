@@ -36,6 +36,7 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 		this.stateToNode = stateToNode;
 
 		playPane = new BorderPane();
+		playPane.setPadding(new Insets(10));
 		paneBuilder.accept(playPane);
 	}
 
