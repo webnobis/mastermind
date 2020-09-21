@@ -4,6 +4,8 @@ import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
+import com.webnobis.mastermind.service.AssessmentService;
+import com.webnobis.mastermind.service.PlayService;
 import com.webnobis.mastermind.view.ColorType;
 import com.webnobis.mastermind.view.PlayMenu;
 import com.webnobis.mastermind.view.PlayPane;
@@ -29,18 +31,10 @@ public class Mastermind extends Application {
 	public void start(Stage stage) throws Exception {
 		VBox playPane = new VBox();
 
-		/*
-		 * Menu-Items werden beim Anklicken nicht angezeigt. Das Mouse-Klicken ist
-		 * deaktiviert. Das ist immer so, wenn Sphere verwendet wird, egal ob in Group,
-		 * einem Extra-Pane oder so. Nur wenn Sphere nicht vorhanden ist, läßt sich das
-		 * Menu mit der Mouse bedienen. Mit Tasten geht es jedoch immer: ALT + Nach
-		 * unten Irgendwie scheinen Mouse-Events bei Sphere abgeschaltet zu sein...
-		 */
-
-		PlayMenu.addMenu(playPane, (event, command) -> {
-			System.out.println(command);
-			event.consume();
-		});
+		PlayMenu.addMenu(stage, playPane,
+				new PlayService<ColorType>(i -> Source.of(ColorType.BLUE), AssessmentService::assess), () -> Play.of(3, Source.of(ColorType.VIOLET)).getId(), play -> {
+					System.out.println(play);
+				});
 
 		new PlayPane<ColorType>(playPane.getChildren()::add, SourcesToNode::toColorTypeNode,
 				ResultsToNode::toResultTypeNode, StateToNode::toStateNode)

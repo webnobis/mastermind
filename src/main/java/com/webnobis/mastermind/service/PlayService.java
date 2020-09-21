@@ -1,9 +1,11 @@
 package com.webnobis.mastermind.service;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -24,13 +26,11 @@ import com.webnobis.mastermind.model.Source;
  */
 public class PlayService<T> {
 
-	private static final String XML_FILE_EXT = ".xml";
-
-	private final Path rootPath;
-
 	private final IntFunction<Source<T>> solutionGenerator;
 
 	private final BiFunction<Source<T>, Source<T>, Result<T>> assessmentService;
+
+	private final Map<String, Play<T>> playCache;
 
 	/**
 	 * Play service with root path persistent area, solution generator and
@@ -40,11 +40,11 @@ public class PlayService<T> {
 	 * @param solutionGenerator solution generator
 	 * @param assessmentService assessment service
 	 */
-	public PlayService(Path rootPath, IntFunction<Source<T>> solutionGenerator,
+	public PlayService(IntFunction<Source<T>> solutionGenerator,
 			BiFunction<Source<T>, Source<T>, Result<T>> assessmentService) {
-		this.rootPath = Objects.requireNonNull(rootPath, "rootPath is null");
 		this.solutionGenerator = Objects.requireNonNull(solutionGenerator, "solutionGenerator is null");
 		this.assessmentService = Objects.requireNonNull(assessmentService, "assessmentService is null");
+		playCache = new HashMap<>();
 	}
 
 	/**
@@ -56,7 +56,9 @@ public class PlayService<T> {
 	 * @see PlayStore#store(Play, Path)
 	 */
 	public Play<T> newPlay(int cols) {
-		return storePlay(Play.of(cols, solutionGenerator.apply(cols))).withoutSource();
+		Play<T> play = Play.of(cols, solutionGenerator.apply(cols));
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
@@ -70,18 +72,22 @@ public class PlayService<T> {
 	 * @see PlayStore#store(Play, Path)
 	 */
 	public Play<T> newPlay(int cols, int rows) {
-		return storePlay(Play.of(cols, rows, solutionGenerator.apply(cols))).withoutSource();
+		Play<T> play = Play.of(cols, rows, solutionGenerator.apply(cols));
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
 	 * Get the persist play, if available
 	 * 
-	 * @param id play id
+	 * @param file file containing a XML play
 	 * @return play, otherwise null
 	 * @see PlayStore#load(Path)
 	 */
-	public Play<T> getPlay(String id) {
-		return loadPlay(id).withoutSource();
+	public Play<T> getPlay(Path file) {
+		Play<T> play = PlayStore.load(file);
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
@@ -97,12 +103,12 @@ public class PlayService<T> {
 	 * @see PlayService#quitPlay(String)
 	 */
 	public Play<T> nextTry(String id, Source<T> trySource) {
-		return Optional
-				.ofNullable(
-						loadPlay(id))
-				.map(play -> play.withAddedResult(assessmentService.apply(play.getSource(),
-						Objects.requireNonNull(trySource, "trySource is null"))).withoutSource())
-				.orElse(null);
+		Play<T> play = Optional.ofNullable(id).map(playCache::get)
+				.map(foundPlay -> foundPlay.withAddedResult(assessmentService.apply(foundPlay.getSource(),
+						Objects.requireNonNull(trySource, "trySource is null"))))
+				.orElseThrow(() -> new NoSuchElementException(id));
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
@@ -115,36 +121,34 @@ public class PlayService<T> {
 	 * @see PlayStore#store(Play, Path)
 	 */
 	public Play<T> quitPlay(String id) {
-		return Optional.ofNullable(loadPlay(id)).orElse(null);
+		return Optional.ofNullable(id).map(playCache::get).orElseThrow(() -> new NoSuchElementException(id));
+	}
+
+	/**
+	 * Stores the play, if available
+	 * 
+	 * @param id   play id
+	 * @param file file which should containing the XML play
+	 * @return true if available and stored
+	 * @throws UncheckedIOException if the play couldn't be stored
+	 * @see Files#deleteIfExists(Path)
+	 */
+	public boolean storePlay(String id, Path file) {
+		return Optional.ofNullable(id).map(playCache::get).map(play -> PlayStore.store(play, file)).orElse(false);
 	}
 
 	/**
 	 * Removes the persist play, if available
 	 * 
-	 * @param id play id
+	 * @param id   play id
+	 * @param file the file
 	 * @return true if available and removed
 	 * @throws UncheckedIOException if the persist play isn't removable
 	 * @see Files#deleteIfExists(Path)
 	 */
-	public boolean removePlay(String id) {
-		try {
-			return Files.deleteIfExists(buildFile(id));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
-
-	private Path buildFile(String id) {
-		return rootPath.resolve(Objects.requireNonNull(id, "id is null").concat(XML_FILE_EXT));
-	}
-
-	private Play<T> loadPlay(String id) {
-		return PlayStore.<T>load(buildFile(id));
-	}
-
-	private Play<T> storePlay(Play<T> play) {
-		PlayStore.store(play, buildFile(play.getId()));
-		return play;
+	public boolean removePlay(Path file) {
+		return Optional.ofNullable(getPlay(file)).map(Play::getId).map(playCache::remove)
+				.map(play -> PlayStore.delete(file)).orElse(false);
 	}
 
 }

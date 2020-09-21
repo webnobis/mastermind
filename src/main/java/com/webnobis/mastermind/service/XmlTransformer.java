@@ -3,6 +3,7 @@ package com.webnobis.mastermind.service;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import javax.xml.bind.DataBindingException;
@@ -31,7 +32,12 @@ public interface XmlTransformer {
 	 */
 	static <T> T toModel(String xml, Class<T> modelType) {
 		try (CharArrayReader in = new CharArrayReader(Objects.requireNonNull(xml, "xml is null").toCharArray())) {
-			return JAXB.unmarshal(in, Objects.requireNonNull(modelType));
+			try {
+				return JAXB.unmarshal(in, Objects.requireNonNull(modelType));
+			} catch (DataBindingException e) {
+				throw new DataBindingException(
+						MessageFormat.format("Invalid xml {0} for type {1} found. {2}", xml, modelType, e.getMessage()), e);
+			}
 		}
 	}
 
