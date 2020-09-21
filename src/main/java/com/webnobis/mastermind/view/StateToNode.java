@@ -17,7 +17,10 @@ public interface StateToNode {
 		return Optional.ofNullable(flag).<Node>map(selected -> {
 			RadioButton state = new RadioButton(label);
 			state.setSelected(selected);
-			state.setOnAction(event -> state.setSelected(selected));
+			state.setOnAction(event -> {
+				state.setSelected(selected);
+				event.consume();
+			});
 			return state;
 		}).orElseGet(() -> {
 			TextField text = new TextField(label);

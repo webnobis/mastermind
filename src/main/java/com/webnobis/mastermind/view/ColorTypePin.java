@@ -30,10 +30,10 @@ public interface ColorTypePin {
 			}
 		}
 		Sphere pin = new Sphere(radius);
-//		pin.setDrawMode(DrawMode.FILL);
+//		pin.setDrawMode(DrawMode.LINE);
 //		pin.setOpacity(30);
 //		pin.setCache(true);
-//		pin.setCullFace(CullFace.BACK);
+//		pin.setCullFace(CullFace.NONE);
 //		pin.setPickOnBounds(true);
 		pin.setMaterial(new PhongMaterial(color));
 		return pin;
