@@ -2,35 +2,49 @@ package com.webnobis.mastermind.view;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.model.Source;
 import com.webnobis.mastermind.service.PlayService;
 
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 
-public interface PlayMenu {
+public class PlayMenu<T> {
 
-	static void addMenu(Window parent, VBox playPane, PlayService<ColorType> playService, Supplier<String> currentPlayIdSupplier,
-			Consumer<Play<ColorType>> playListener) {
+	private final Window parent;
+
+	private final PlayService<T> playService;
+
+	private final BiFunction<Window, Play<T>, Source<T>> nextTryListener;
+
+	private final Consumer<Play<T>> playListener;
+
+	private final AtomicReference<Play<T>> currentPlayRef;
+
+	public PlayMenu(Window parent, PlayService<T> playService, BiFunction<Window, Play<T>, Source<T>> nextTryListener,
+			Consumer<Play<T>> playListener) {
+		this.parent = parent;
+		this.playService = playService;
+		this.nextTryListener = nextTryListener;
+		this.playListener = playListener;
+		currentPlayRef = new AtomicReference<>();
+	}
+
+	public MenuBar create() {
 		RadioMenuItem storePlay = new RadioMenuItem("Speichern");
 		storePlay.setOnAction(event -> {
-			Optional.ofNullable(currentPlayIdSupplier.get()).ifPresent(id -> {
+			Optional.ofNullable(currentPlayRef.get()).map(Play::getId).ifPresent(id -> {
 				FileChooser chooser = new FileChooser();
 				chooser.setInitialFileName(id.concat(".xml"));
 				storePlay.setSelected(Optional.ofNullable(chooser.showSaveDialog(parent)).map(File::toPath)
@@ -45,7 +59,8 @@ public interface PlayMenu {
 			RadioMenuItem newPlayItem = new RadioMenuItem(cols + " x unbegrenzt");
 			newPlayItem.setToggleGroup(newGroup);
 			newPlayItem.setOnAction(event -> {
-				playListener.accept(playService.newPlay(cols));
+				Play<T> play = playService.newPlay(cols);
+				playListener.accept(currentPlayRef.updateAndGet(unused -> play));
 				storePlay.setSelected(false);
 				event.consume();
 			});
@@ -56,31 +71,34 @@ public interface PlayMenu {
 		openPlay.setOnAction(event -> {
 			FileChooser chooser = new FileChooser();
 			Optional.ofNullable(chooser.showOpenDialog(parent)).map(File::toPath).ifPresent(file -> {
-				playListener.accept(playService.getPlay(file));
+				Play<T> play = playService.getPlay(file);
+				playListener.accept(currentPlayRef.updateAndGet(unused -> play));
 				storePlay.setSelected(false);
 			});
 			event.consume();
 		});
 
 		MenuItem nextTry = new MenuItem("Nächster Versuch");
-		openPlay.setOnAction(event -> {
-			Optional.ofNullable(currentPlayIdSupplier.get()).ifPresent(id -> {
-				DialogPane tryDialog = new DialogPane();
-				tryDialog.setContent(new Button("Versuch"));
-				Stage stage = new Stage();
-				stage.setScene(new Scene(tryDialog));
-				stage.showAndWait();
-				playListener.accept(playService.nextTry(id, Source.of(ColorType.YELLOW)));
-			});
+		nextTry.setOnAction(event -> {
+			Optional.ofNullable(currentPlayRef.get())
+					.ifPresent(play -> Optional.ofNullable(nextTryListener.apply(parent, play)).ifPresent(source -> {
+						Play<T> updatedPlay = playService.nextTry(play.getId(), source);
+						playListener.accept(currentPlayRef.updateAndGet(unused -> updatedPlay));
+					}));
 			event.consume();
 		});
 
+		MenuItem exit = new MenuItem("Beenden");
+		exit.setOnAction(event -> System.exit(0));
+
 		Menu menu = new Menu("Spiel");
-		menu.getItems().addAll(newPlay, new SeparatorMenuItem(), openPlay, storePlay, new SeparatorMenuItem(), nextTry, new SeparatorMenuItem());
+		menu.getItems().addAll(newPlay, new SeparatorMenuItem(), openPlay, storePlay, new SeparatorMenuItem(), nextTry,
+				new SeparatorMenuItem(), exit);
 
-		MenuBar menuBar = new MenuBar(menu);
+		// 1st opens a new play
+		newPlay.getItems().iterator().next().fire();
 
-		playPane.getChildren().add(menuBar);
+		return new MenuBar(menu);
 	}
 
 }

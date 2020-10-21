@@ -18,8 +18,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 public class PlayPane<T> implements Consumer<Play<T>> {
+
+	private final Window parent;
 
 	private final Function<List<T>, Node> sourcesToNode;
 
@@ -27,22 +30,23 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 
 	private final BiFunction<String, Boolean, Node> stateToNode;
 
-	private final BorderPane playPane;
+	private final BorderPane mainPane;
 
-	public PlayPane(Consumer<Pane> paneBuilder, Function<List<T>, Node> sourcesToNode,
+	public PlayPane(Window parent, Consumer<Pane> paneBuilder, Function<List<T>, Node> sourcesToNode,
 			Function<List<ResultType>, Node> resultsToNode, BiFunction<String, Boolean, Node> stateToNode) {
+		this.parent = parent;
 		this.sourcesToNode = sourcesToNode;
 		this.resultsToNode = resultsToNode;
 		this.stateToNode = stateToNode;
 
-		playPane = new BorderPane();
-		playPane.setPadding(new Insets(10));
-		paneBuilder.accept(playPane);
+		mainPane = new BorderPane();
+		mainPane.setPadding(new Insets(10));
+		paneBuilder.accept(mainPane);
 	}
 
 	@Override
 	public void accept(Play<T> play) {
-		playPane.getChildren().clear();
+		mainPane.getChildren().clear();
 
 		VBox statePane = new VBox();
 		// statePane.setPadding(new Insets(2));
@@ -53,7 +57,7 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 		statePane.getChildren().add(stateToNode.apply("Unbegrenzt", play.isUnlimited()));
 		statePane.getChildren().add(stateToNode.apply("Gelöst", play.isSolved()));
 		statePane.getChildren().add(stateToNode.apply("Beendet", play.isFinish()));
-		playPane.setTop(statePane);
+		mainPane.setTop(statePane);
 
 		VBox resultsPane = new VBox();
 		// resultsPane.setPadding(new Insets(2));
@@ -67,7 +71,7 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 			pane.getChildren().add(resultsToNode.apply(result.getResults()));
 			resultsPane.getChildren().add(pane);
 		});
-		playPane.setCenter(resultsPane);
+		mainPane.setCenter(resultsPane);
 		BorderPane.setMargin(resultsPane, new Insets(20, 0, 20, 0));
 
 		Optional.ofNullable(play.getSource()).map(Source::getSources).map(sourcesToNode::apply).ifPresent(node -> {
@@ -76,8 +80,10 @@ public class PlayPane<T> implements Consumer<Play<T>> {
 			pane.setAlignment(Pos.CENTER_LEFT);
 			pane.getChildren().add(node);
 			pane.getChildren().add(new Label("wurde gesucht"));
-			playPane.setBottom(pane);
+			mainPane.setBottom(pane);
 		});
+
+		parent.sizeToScene();
 	}
 
 }
