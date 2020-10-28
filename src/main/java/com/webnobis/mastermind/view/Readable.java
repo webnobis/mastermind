@@ -1,8 +1,8 @@
 package com.webnobis.mastermind.view;
 
 @FunctionalInterface
-public interface Updateable<T> {
+public interface Readable<T> {
 
-	void update(T type);
+	T getType();
 
 }

@@ -1,5 +1,7 @@
 package com.webnobis.mastermind;
 
+import com.webnobis.mastermind.view.NextTryDialog;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
@@ -23,24 +25,25 @@ public class MenuSphereMain extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		VBox pane = new VBox();
-		
-		Sphere sphere = new Sphere(50);
-		sphere.setDepthTest(DepthTest.ENABLE);
-
-		pane.getChildren().add(createMenu());
-		pane.getChildren().add(sphere);
-		pane.setDepthTest(DepthTest.DISABLE);
-		
-		Scene scene = new Scene(pane, pane.getPrefWidth(), pane.getPrefHeight(), true,
-				SceneAntialiasing.BALANCED);
-		scene.setCamera(new PerspectiveCamera());
-
-		stage.setTitle("Mastermind 2.0");
-		stage.centerOnScreen();
-		stage.setScene(scene);
-		stage.show();
-
+//		VBox pane = new VBox();
+//		
+//		Sphere sphere = new Sphere(50);
+//		sphere.setDepthTest(DepthTest.ENABLE);
+//
+//		pane.getChildren().add(createMenu());
+//		pane.getChildren().add(sphere);
+//		pane.setDepthTest(DepthTest.DISABLE);
+//		
+//		Scene scene = new Scene(pane, pane.getPrefWidth(), pane.getPrefHeight(), true,
+//				SceneAntialiasing.BALANCED);
+//		scene.setCamera(new PerspectiveCamera());
+//
+//		stage.setTitle("Mastermind 2.0");
+//		stage.centerOnScreen();
+//		stage.setScene(scene);
+//		stage.show();
+//
+		new NextTryDialog(4, System.out::println);
 	}
 
 	private MenuBar createMenu() {

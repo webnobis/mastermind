@@ -13,7 +13,7 @@ public class PinPaletteNode implements Paneable<Pane> {
 	private final TilePane pane;
 
 	public PinPaletteNode() {
-		pane = new TilePane(2, 2);
+		pane = new TilePane(5, 5);
 		pane.setPrefRows(2);
 		EnumSet.complementOf(EnumSet.of(ColorType.BLACK, ColorType.WHITE, ColorType.HOLE)).stream().map(PinNode::new)
 				.map(pinNode -> {
