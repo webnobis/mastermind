@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.old;
 
 import java.util.List;
 import java.util.Optional;

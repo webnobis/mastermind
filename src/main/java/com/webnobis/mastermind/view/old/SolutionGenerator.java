@@ -1,4 +1,4 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.old;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.webnobis.mastermind.model.Source;
+import com.webnobis.mastermind.view.ColorType;
 
 public interface SolutionGenerator {
 

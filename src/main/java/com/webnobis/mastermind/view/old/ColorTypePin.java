@@ -1,6 +1,9 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.old;
 
 import java.util.Objects;
+
+import com.webnobis.mastermind.view.ColorType;
+import com.webnobis.mastermind.view.PinNode;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -12,7 +15,7 @@ public interface ColorTypePin {
 
 	static final double SMALL = 8.0;
 
-	static Sphere create(ColorType colorType) {
+	static PinNode create(ColorType colorType) {
 		double radius = BIG;
 		Color color;
 		switch (Objects.requireNonNull(colorType)) {
@@ -36,7 +39,7 @@ public interface ColorTypePin {
 //		pin.setCullFace(CullFace.NONE);
 //		pin.setPickOnBounds(true);
 		pin.setMaterial(new PhongMaterial(color));
-		return pin;
+		return new PinNode(pin, colorType);
 	}
 
 	public class ColorTypeException extends RuntimeException {

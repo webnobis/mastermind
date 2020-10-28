@@ -1,8 +1,9 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.old;
 
 import java.util.List;
 
 import com.webnobis.mastermind.model.ResultType;
+import com.webnobis.mastermind.view.ColorType;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

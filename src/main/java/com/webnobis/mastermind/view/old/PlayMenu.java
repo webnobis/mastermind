@@ -1,10 +1,10 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.old;
 
 import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import com.webnobis.mastermind.model.Play;
@@ -26,13 +26,13 @@ public class PlayMenu<T> {
 
 	private final PlayService<T> playService;
 
-	private final BiFunction<Window, Play<T>, Source<T>> nextTryListener;
+	private final Function<Play<T>, Source<T>> nextTryListener;
 
 	private final Consumer<Play<T>> playListener;
 
 	private final AtomicReference<Play<T>> currentPlayRef;
 
-	public PlayMenu(Window parent, PlayService<T> playService, BiFunction<Window, Play<T>, Source<T>> nextTryListener,
+	public PlayMenu(Window parent, PlayService<T> playService, Function<Play<T>, Source<T>> nextTryListener,
 			Consumer<Play<T>> playListener) {
 		this.parent = parent;
 		this.playService = playService;
@@ -81,7 +81,7 @@ public class PlayMenu<T> {
 		MenuItem nextTry = new MenuItem("Nächster Versuch");
 		nextTry.setOnAction(event -> {
 			Optional.ofNullable(currentPlayRef.get())
-					.ifPresent(play -> Optional.ofNullable(nextTryListener.apply(parent, play)).ifPresent(source -> {
+					.ifPresent(play -> Optional.ofNullable(nextTryListener.apply(play)).ifPresent(source -> {
 						Play<T> updatedPlay = playService.nextTry(play.getId(), source);
 						playListener.accept(currentPlayRef.updateAndGet(unused -> updatedPlay));
 					}));
