@@ -3,18 +3,14 @@ package com.webnobis.mastermind;
 import com.webnobis.mastermind.view.NextTryDialog;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.scene.DepthTest;
-import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 
 public class MenuSphereMain extends Application{
@@ -25,7 +21,7 @@ public class MenuSphereMain extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-//		VBox pane = new VBox();
+		VBox pane = new VBox(new Label("777"));
 //		
 //		Sphere sphere = new Sphere(50);
 //		sphere.setDepthTest(DepthTest.ENABLE);
@@ -38,8 +34,8 @@ public class MenuSphereMain extends Application{
 //				SceneAntialiasing.BALANCED);
 //		scene.setCamera(new PerspectiveCamera());
 //
-//		stage.setTitle("Mastermind 2.0");
-//		stage.centerOnScreen();
+		stage.setTitle("Mastermind 2.0");
+		stage.centerOnScreen();
 //		stage.setScene(scene);
 //		stage.show();
 //

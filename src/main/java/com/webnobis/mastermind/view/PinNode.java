@@ -1,42 +1,39 @@
 package com.webnobis.mastermind.view;
 
-import java.util.Objects;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.webnobis.mastermind.view.old.ColorTypePin.ColorTypeException;
-
 import javafx.geometry.Insets;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.control.skin.LabelSkin;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Sphere;
 
-public class PinNode implements Updateable<ColorType>, Readable<ColorType>, Paneable<Pane> {
+public class PinNode extends Control implements Updateable<ColorType>, Readable<ColorType> {
 
-	static final double BIG = 18.0;
+	static final double BIG = 30.0;
 
-	static final double SMALL = 8.0;
+	static final double SMALL = 12.0;
 
 	private final AtomicReference<ColorType> colorTypeRef;
-
-	private final Pane pane;
 
 	public PinNode() {
 		this(null);
 	}
 
 	public PinNode(ColorType colorType) {
+		super();
+		super.setSkin(new LabelSkin(new Label()));
 		colorTypeRef = new AtomicReference<>();
-		pane = new StackPane(new Pane());
-		pane.setPadding(new Insets(2));
 		update(colorType);
-	}
-
-	@Override
-	public Pane getPane() {
-		return pane;
 	}
 
 	@Override
@@ -47,25 +44,42 @@ public class PinNode implements Updateable<ColorType>, Readable<ColorType>, Pane
 	@Override
 	public void update(ColorType colorType) {
 		colorTypeRef.set(Optional.ofNullable(colorType).orElse(ColorType.HOLE));
-
-		double radius = BIG;
-		Color color;
-		switch (Objects.requireNonNull(colorType)) {
-		case HOLE:
-			color = null;
-			break;
-		case BLACK:
-		case WHITE:
-			radius = SMALL;
-		default:
-			try {
-				color = Color.class.cast(Color.class.getDeclaredField(colorType.name()).get(null));
-			} catch (Exception e) {
-				throw new ColorTypeException(e);
-			}
-		}
-		Sphere pin = new Sphere(radius);
-		pin.setMaterial(new PhongMaterial(color));
-		pane.getChildren().set(0, pin);
+		update();
 	}
+
+	private void update() {
+		double radius = getRadius();
+		Optional.ofNullable(getColor()).ifPresentOrElse(color -> {
+			super.setBorder(null);
+			super.setBackground(createBackground(radius, color));
+		}, () -> {
+			super.setBorder(createBorder(radius));
+			super.setBackground(null);
+		});
+		super.setMinSize(radius, radius);
+		super.setPrefSize(radius, radius);
+		super.setMaxSize(radius, radius);
+	}
+
+	private double getRadius() {
+		return EnumSet.of(ColorType.BLACK, ColorType.WHITE).contains(getType()) ? SMALL : BIG;
+	}
+
+	private Color getColor() {
+		try {
+			return Color.class.cast(Color.class.getDeclaredField(getType().name()).get(null));
+		} catch (Exception e) {
+			return null; // such as HOLE
+		}
+	}
+
+	private Border createBorder(double radius) {
+		return new Border(new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, new CornerRadii(radius),
+				new BorderWidths(1)));
+	}
+
+	private Background createBackground(double radius, Color color) {
+		return new Background(new BackgroundFill(color, new CornerRadii(radius), new Insets(0)));
+	}
+
 }

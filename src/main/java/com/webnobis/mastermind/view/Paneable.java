@@ -3,8 +3,8 @@ package com.webnobis.mastermind.view;
 import javafx.scene.layout.Pane;
 
 @FunctionalInterface
-public interface Paneable<P extends Pane> {
+public interface Paneable<T extends Pane> {
 
-	P getPane();
+	T getPane();
 
 }

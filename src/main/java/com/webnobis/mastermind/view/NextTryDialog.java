@@ -1,68 +1,39 @@
 package com.webnobis.mastermind.view;
 
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.webnobis.mastermind.model.Source;
 
-import javafx.geometry.Insets;
-import javafx.scene.DepthTest;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Window;
 
 public class NextTryDialog {
 
 	public NextTryDialog(int cols, Updateable<Source<ColorType>> updateable) {
 		Objects.requireNonNull(updateable);
-
-		BorderPane pane = new BorderPane();
-		pane.setPadding(new Insets(10));
-		// depth test disable fixes the not working menu events
-		pane.setDepthTest(DepthTest.DISABLE);
-
-		Scene scene = new Scene(pane, pane.getPrefWidth(), pane.getPrefHeight(), true, SceneAntialiasing.BALANCED);
-		scene.setCamera(new PerspectiveCamera());
-
-		Stage stage = new Stage();
-		stage.setTitle("Nächster Versuch");
-		stage.centerOnScreen();
-		stage.setScene(scene);
-
-		pane.setLeft(new PinPaletteNode().getPane());
-
 		NextTryNode nextTryNode = new NextTryNode(cols);
-		pane.setRight(nextTryNode.getPane());
 
-		Button ok = new Button(ButtonType.OK.getText());
-		ok.setOnAction(event -> {
-			updateable.update(Source.of(toArray(nextTryNode.getType())));
-			stage.close();
-			event.consume();
-		});
-		ButtonBar.setButtonData(ok, ButtonData.OK_DONE);
-		Button cancel = new Button(ButtonType.CANCEL.getText());
-		cancel.setOnAction(event -> {
-			stage.close();
-			event.consume();
-		});
-		ButtonBar.setButtonData(cancel, ButtonData.CANCEL_CLOSE);
-		ButtonBar buttonBar = new ButtonBar();
-		buttonBar.getButtons().addAll(cancel, ok);
-		pane.setBottom(buttonBar);
+		Dialog<Source<ColorType>> dialog = new Dialog<>();
+		dialog.setTitle("Nächster Versuch");
+		dialog.setHeaderText("Bitte Pins nach rechts in die Felder\ndes nächsten Versuchs ziehen:");
+		dialog.setResizable(false);
+		dialog.setResultConverter(
+				buttonType -> ButtonType.OK.equals(buttonType) ? Source.of(nextTryNode.getType()) : null);
 
-		stage.sizeToScene();
-		stage.showAndWait();
-	}
+		DialogPane dialogPane = dialog.getDialogPane();
+		dialogPane.setContent(new HBox(new PinPaletteNode().getPane(), nextTryNode.getPane()));
+		dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-	private static ColorType[] toArray(Map<Integer, ColorType> colorTypes) {
-		return colorTypes.keySet().stream().sorted().map(colorTypes::get).toArray(i -> new ColorType[i]);
+		Window window = dialogPane.getScene().getWindow();
+		window.sizeToScene();
+		window.centerOnScreen();
+
+		dialog.showAndWait();
+		Optional.ofNullable(dialog.getResult()).ifPresent(updateable::update);
 	}
 
 }

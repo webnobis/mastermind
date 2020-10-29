@@ -2,31 +2,44 @@ package com.webnobis.mastermind.view;
 
 import java.util.EnumSet;
 
+import javafx.geometry.Insets;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
 
 public class PinPaletteNode implements Paneable<Pane> {
 
+	public static final int PADDING = 5;
+	
 	private final TilePane pane;
 
 	public PinPaletteNode() {
-		pane = new TilePane(5, 5);
+		pane = new TilePane(PADDING, PADDING);
 		pane.setPrefRows(2);
-		EnumSet.complementOf(EnumSet.of(ColorType.BLACK, ColorType.WHITE, ColorType.HOLE)).stream().map(PinNode::new)
-				.map(pinNode -> {
-					Pane pinPane = pinNode.getPane();
-					pinPane.setOnDragDetected(event -> {
-						Dragboard db = pinPane.startDragAndDrop(TransferMode.COPY);
-						ClipboardContent content = new ClipboardContent();
-						content.put(new TypeDataFormat<>(ColorType.class), pinNode.getType());
-						db.setContent(content);
-						event.consume();
-					});
-					return pinPane;
-				}).forEach(pane.getChildren()::add);
+		pane.setPadding(new Insets(PADDING));
+		pane.setBorder(new Border(
+				new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(1))));
+		EnumSet.complementOf(EnumSet.of(ColorType.BLACK, ColorType.WHITE)).stream().map(PinNode::new)
+				.map(PinPaletteNode::startDragAndDrop).forEach(pane.getChildren()::add);
+	}
+
+	private static PinNode startDragAndDrop(PinNode pinNode) {
+		pinNode.setOnDragDetected(event -> {
+			Dragboard db = pinNode.startDragAndDrop(TransferMode.COPY);
+			ClipboardContent content = new ClipboardContent();
+			content.putString(pinNode.getType().name());
+			db.setContent(content);
+			event.consume();
+		});
+		return pinNode;
 	}
 
 	@Override
