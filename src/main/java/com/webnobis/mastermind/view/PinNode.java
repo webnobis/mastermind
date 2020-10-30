@@ -21,7 +21,7 @@ public class PinNode extends Control implements Updateable<ColorType>, Readable<
 
 	static final double BIG = 30.0;
 
-	static final double SMALL = 12.0;
+	static final double SMALL = 15.0;
 
 	private final AtomicReference<ColorType> colorTypeRef;
 
@@ -79,7 +79,7 @@ public class PinNode extends Control implements Updateable<ColorType>, Readable<
 	}
 
 	private static Background createBackground(double radius, Color color) {
-		return new Background(new BackgroundFill(color, new CornerRadii(radius), new Insets(0)));
+		return new Background(new BackgroundFill(color, new CornerRadii(radius), Insets.EMPTY));
 	}
 
 }

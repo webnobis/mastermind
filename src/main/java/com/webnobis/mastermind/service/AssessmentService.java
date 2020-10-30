@@ -11,8 +11,26 @@ import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
 import com.webnobis.mastermind.model.Source;
 
+/**
+ * Assessment service, builds the assessment logic of the Mastermind game
+ * 
+ * @author steffen
+ *
+ */
 public interface AssessmentService {
 
+	/**
+	 * Assess the try source depending on the solution source.<br>
+	 * Each equal position results in {@link ResultType#EXACT}.<br>
+	 * All others in solution containing try elements resulting in
+	 * {@link ResultType#PRESENT}.
+	 * 
+	 * @param <T>            type of elements
+	 * @param solutionSource comparison solution source
+	 * @param trySource      try source
+	 * @return result, containing the try source and all got result types
+	 * @see ResultType
+	 */
 	static <T> Result<T> assess(Source<T> solutionSource, Source<T> trySource) {
 		Objects.requireNonNull(solutionSource, "solutionSource is null");
 		Objects.requireNonNull(trySource, "trySource is null");

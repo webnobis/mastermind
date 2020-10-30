@@ -18,6 +18,8 @@ import javafx.stage.Window;
 
 public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 
+	private static final String XML_EXT = ".xml";
+
 	private final Label storedFlag;
 
 	private final MenuItem item;
@@ -32,7 +34,7 @@ public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 		item = new MenuItem("Speichern", storedFlag);
 		item.setOnAction(event -> {
 			FileChooser chooser = new FileChooser();
-			chooser.setInitialFileName(Objects.requireNonNull(idSupplier.get()).concat(".xml"));
+			chooser.setInitialFileName(Objects.requireNonNull(idSupplier.get()).concat(XML_EXT));
 			Optional.ofNullable(chooser.showSaveDialog(Objects.requireNonNull(parent))).map(File::toPath)
 					.ifPresent(updateable::update);
 			event.consume();
@@ -51,7 +53,7 @@ public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 	}
 
 	private static Background createBackground(Color color) {
-		return new Background(new BackgroundFill(color, new CornerRadii(1), new Insets(0)));
+		return new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY));
 	}
 
 }

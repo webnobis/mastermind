@@ -7,7 +7,7 @@ public class ExitMenu implements Menuable<MenuItem> {
 	private final MenuItem item;
 
 	public ExitMenu() {
-		item = new MenuItem("Beenden");
+		item = new MenuItem("Verlassen");
 		item.setOnAction(event -> System.exit(0));
 	}
 

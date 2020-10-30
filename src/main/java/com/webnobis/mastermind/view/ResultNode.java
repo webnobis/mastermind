@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
 
+import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -15,6 +16,7 @@ public class ResultNode implements Paneable<Pane> {
 	public ResultNode(Result<ColorType> result) {
 		Objects.requireNonNull(result);
 		GridPane resultPane = new GridPane();
+		resultPane.setAlignment(Pos.CENTER_LEFT);
 		resultPane.setHgap(Constants.PADDING.getIntValue());
 		resultPane.addRow(0, result.getResults().stream().map(ResultNode::toColorType).map(PinNode::new)
 				.toArray(i -> new PinNode[i]));

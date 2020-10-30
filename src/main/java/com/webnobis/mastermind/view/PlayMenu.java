@@ -1,17 +1,14 @@
 package com.webnobis.mastermind.view;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.service.PlayService;
 
-import javafx.animation.PauseTransition;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.Window;
-import javafx.util.Duration;
 
 public class PlayMenu implements Menuable<Menu> {
 
@@ -32,13 +29,17 @@ public class PlayMenu implements Menuable<Menu> {
 
 	@Override
 	public Menu getMenuItem() {
-		AtomicBoolean storeNeededRef = new AtomicBoolean();
+		AtomicReference<Updateable<Boolean>> storeNeededRef = new AtomicReference<>();
+		StoreMenu storeMenu = new StoreMenu(path -> {
+			storeNeededRef.get().update(!playService.storePlay(playRef.get().getId(), path));
+		}, () -> playRef.get().getId(), parent);
+		storeNeededRef.set(storeMenu);
 
 		NewMenu newMenu = new NewMenu(range -> {
 			Play<ColorType> play = playService.newPlay(range.getCols(), range.getRows());
 			playRef.set(play);
 			updateable.update(play);
-			storeNeededRef.set(true);
+			storeNeededRef.get().update(false);
 		});
 		newMenu.getMenuItem().getItems().iterator().next().fire();
 
@@ -48,28 +49,24 @@ public class PlayMenu implements Menuable<Menu> {
 			updateable.update(play);
 		}, parent);
 
-		StoreMenu storeMenu = new StoreMenu(path -> {
-			storeNeededRef.set(!playService.storePlay(playRef.get().getId(), path));
-		}, () -> playRef.get().getId(), parent);
-
 		NextTryMenu nextTryMenu = new NextTryMenu(source -> {
 			Play<ColorType> play = playService.nextTry(playRef.get().getId(), source);
 			playRef.set(play);
 			updateable.update(play);
-			storeNeededRef.set(true);
+			storeNeededRef.get().update(true);
 		}, () -> playRef.get().getCols());
 
-		PauseTransition pause = new PauseTransition(Duration.seconds(1));
-		pause.setOnFinished(event -> {
-			storeMenu.update(storeNeededRef.get());
-			pause.playFromStart(); // loop again
+		QuitMenu quitMenu = new QuitMenu(unused -> {
+			Play<ColorType> play = playService.quitPlay(playRef.get().getId());
+			playRef.set(play);
+			updateable.update(play);
+			storeNeededRef.get().update(true);
 		});
-		pause.play();
 
 		Menu menu = new Menu("Spiel");
 		menu.getItems().addAll(newMenu.getMenuItem(), openMenu.getMenuItem(), storeMenu.getMenuItem(),
-				new SeparatorMenuItem(), nextTryMenu.getMenuItem(), new SeparatorMenuItem(),
-				new ExitMenu().getMenuItem());
+				new SeparatorMenuItem(), nextTryMenu.getMenuItem(), new SeparatorMenuItem(), quitMenu.getMenuItem(),
+				new SeparatorMenuItem(), new ExitMenu().getMenuItem());
 		return menu;
 	}
 

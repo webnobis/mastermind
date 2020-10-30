@@ -8,7 +8,7 @@ import com.webnobis.mastermind.service.AssessmentService;
  * Result type as representation of same place or contained
  * 
  * @author steffen
- * @see AssessmentService#assess(Source)
+ * @see AssessmentService#assess(Source, Source)
  */
 @XmlEnum
 public enum ResultType {

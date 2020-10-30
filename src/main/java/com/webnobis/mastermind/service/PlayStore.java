@@ -22,7 +22,7 @@ public interface PlayStore {
 	 * Loads a play from file.<br>
 	 * Attention, the type is boxed.
 	 * 
-	 * @param <T>  type of findings
+	 * @param <T>  type of elements
 	 * @param file file containing a XML play
 	 * @return typed play
 	 * @throws UncheckedIOException if the file isn't readable

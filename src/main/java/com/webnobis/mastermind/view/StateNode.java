@@ -9,8 +9,12 @@ import com.webnobis.mastermind.model.Play;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 
@@ -28,12 +32,27 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 
 	public StateNode() {
 		id = new Label();
+		id.setBackground(createBackground());
 		configuration = new Label();
+		configuration.setBackground(createBackground());
 		finish = new CheckBox("beendet");
+		finish.setOnAction(event -> {
+			finish.setSelected(!finish.isSelected());
+			event.consume();
+		});
 		solved = new CheckBox("gelöst");
+		solved.setOnAction(event -> {
+			solved.setSelected(!solved.isSelected());
+			event.consume();
+		});
 		unlimited = new CheckBox("unbegrenzt");
+		unlimited.setOnAction(event -> {
+			unlimited.setSelected(!unlimited.isSelected());
+			event.consume();
+		});
 
 		pane = new GridPane();
+		pane.setVgap(Constants.PADDING.getIntValue());
 		pane.setHgap(Constants.PADDING.getIntValue());
 		pane.setPadding(new Insets(Constants.PADDING.getIntValue()));
 		pane.add(new Label("Id:"), 0, 0, 3, 1);
@@ -64,6 +83,10 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 			pane.add(new Label("Lösung:"), 0, 6, 3, 1);
 			pane.add(new SourceNode(source).getPane(), 0, 7, 3, 1);
 		});
+	}
+
+	private static Background createBackground() {
+		return new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
 	}
 
 }

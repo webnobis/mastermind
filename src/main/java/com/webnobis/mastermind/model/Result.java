@@ -15,7 +15,7 @@ import com.webnobis.mastermind.service.AssessmentService;
  * 
  * @author steffen
  *
- * @param <T> type of findings
+ * @param <T> type of elements
  */
 public class Result<T> extends Source<T> {
 
