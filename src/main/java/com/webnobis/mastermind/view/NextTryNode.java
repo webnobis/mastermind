@@ -19,8 +19,8 @@ public class NextTryNode implements Readable<ColorType[]>, Paneable<Pane> {
 	public NextTryNode(int cols) {
 		pinNodes = new CopyOnWriteArrayList<>();
 		pane = new GridPane();
-		pane.setHgap(PinPaletteNode.PADDING);
-		pane.setPadding(new Insets(PinPaletteNode.PADDING));
+		pane.setHgap(Constants.PADDING.getIntValue());
+		pane.setPadding(new Insets(Constants.PADDING.getIntValue()));
 
 		pane.addRow(0, Stream.<PinNode>generate(PinNode::new).limit(cols).map(pinNode -> {
 			pinNodes.add(pinNode);

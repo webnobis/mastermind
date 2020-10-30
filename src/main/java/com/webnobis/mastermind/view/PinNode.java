@@ -73,12 +73,12 @@ public class PinNode extends Control implements Updateable<ColorType>, Readable<
 		}
 	}
 
-	private Border createBorder(double radius) {
+	private static Border createBorder(double radius) {
 		return new Border(new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, new CornerRadii(radius),
 				new BorderWidths(1)));
 	}
 
-	private Background createBackground(double radius, Color color) {
+	private static Background createBackground(double radius, Color color) {
 		return new Background(new BackgroundFill(color, new CornerRadii(radius), new Insets(0)));
 	}
 

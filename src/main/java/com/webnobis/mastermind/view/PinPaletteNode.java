@@ -16,15 +16,13 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 
 public class PinPaletteNode implements Paneable<Pane> {
-
-	public static final int PADDING = 5;
 	
 	private final TilePane pane;
 
 	public PinPaletteNode() {
-		pane = new TilePane(PADDING, PADDING);
+		pane = new TilePane(Constants.PADDING.getIntValue(), Constants.PADDING.getIntValue());
 		pane.setPrefRows(2);
-		pane.setPadding(new Insets(PADDING));
+		pane.setPadding(new Insets(Constants.PADDING.getIntValue()));
 		pane.setBorder(new Border(
 				new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(1))));
 		EnumSet.complementOf(EnumSet.of(ColorType.BLACK, ColorType.WHITE)).stream().map(PinNode::new)
