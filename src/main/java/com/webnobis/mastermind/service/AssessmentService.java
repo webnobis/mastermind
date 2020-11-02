@@ -1,11 +1,10 @@
 package com.webnobis.mastermind.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
@@ -35,19 +34,21 @@ public interface AssessmentService {
 		Objects.requireNonNull(solutionSource, "solutionSource is null");
 		Objects.requireNonNull(trySource, "trySource is null");
 
-		List<T> presents = new ArrayList<>(
-				trySource.getSources().stream().limit(solutionSource.getSources().size()).collect(Collectors.toList()));
 		List<ResultType> results = new ArrayList<>();
-		IntStream.range(0, solutionSource.getSources().size()).limit(trySource.getSources().size()).forEach(i -> {
+		int size = Math.min(trySource.getSources().size(), solutionSource.getSources().size());
+		Collection<T> tmpSolutionSource = new ArrayList<>(solutionSource.getSources().subList(0, size));
+		Collection<T> tmpTrySources = new ArrayList<>(trySource.getSources().subList(0, size));
+		IntStream.range(0, size).forEach(i -> {
 			T tSolution = solutionSource.getSources().get(i);
 			T tTry = trySource.getSources().get(i);
 			if (Objects.equals(tSolution, tTry)) {
 				results.add(ResultType.EXACT);
-				presents.remove(tTry);
+				tmpSolutionSource.remove(tSolution);
+				tmpTrySources.remove(tTry);
 			}
 		});
-		presents.retainAll(solutionSource.getSources());
-		Stream.generate(() -> ResultType.PRESENT).limit(presents.size()).forEach(results::add);
+		tmpTrySources.stream().filter(tmpSolutionSource::remove).map(unused -> ResultType.PRESENT)
+				.forEach(results::add);
 
 		return Result.of(trySource, results.toArray(ResultType[]::new));
 	}

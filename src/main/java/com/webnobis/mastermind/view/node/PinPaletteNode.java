@@ -1,6 +1,10 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.node;
 
 import java.util.EnumSet;
+
+import com.webnobis.mastermind.model.ColorType;
+import com.webnobis.mastermind.view.Constants;
+import com.webnobis.mastermind.view.Paneable;
 
 import javafx.geometry.Insets;
 import javafx.scene.input.ClipboardContent;
@@ -15,10 +19,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 
+/**
+ * Palette usable color type pin nodes (all except {@link ColorType#BLACK} and
+ * {@link ColorType#WHITE})
+ * 
+ * @author steffen
+ *
+ */
 public class PinPaletteNode implements Paneable<Pane> {
-	
+
 	private final TilePane pane;
 
+	/**
+	 * Node of all usable color type pin nodes, each to drop copy of its color type.
+	 * 
+	 * @see PinNode#startDragAndDrop(TransferMode...)
+	 * @see ClipboardContent#putString(String)
+	 * @see Dragboard#setContent(java.util.Map)
+	 */
 	public PinPaletteNode() {
 		pane = new TilePane(Constants.PADDING.getIntValue(), Constants.PADDING.getIntValue());
 		pane.setPrefRows(2);

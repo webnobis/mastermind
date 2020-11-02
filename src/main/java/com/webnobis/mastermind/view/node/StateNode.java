@@ -1,14 +1,19 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.node;
 
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.model.Play;
+import com.webnobis.mastermind.view.Constants;
+import com.webnobis.mastermind.view.Paneable;
+import com.webnobis.mastermind.view.Updateable;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -16,11 +21,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+/**
+ * State node
+ * 
+ * @author steffen
+ *
+ */
 public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 
-	private final Label id;
+	private static final int TEXTFIELD_PREF_COLS = 22;
 
-	private final Label configuration;
+	private final TextField id;
+
+	private final TextField configuration;
 
 	private final CheckBox finish;
 
@@ -30,11 +43,18 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 
 	private final GridPane pane;
 
+	/**
+	 * State area of all state informations of the play
+	 */
 	public StateNode() {
-		id = new Label();
+		id = new TextField();
+		id.setPrefColumnCount(TEXTFIELD_PREF_COLS);
 		id.setBackground(createBackground());
-		configuration = new Label();
+		id.setEditable(false);
+		configuration = new TextField();
+		configuration.setPrefColumnCount(TEXTFIELD_PREF_COLS);
 		configuration.setBackground(createBackground());
+		configuration.setEditable(false);
 		finish = new CheckBox("beendet");
 		finish.setOnAction(event -> {
 			finish.setSelected(!finish.isSelected());

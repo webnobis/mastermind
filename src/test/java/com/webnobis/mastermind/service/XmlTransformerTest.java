@@ -3,11 +3,14 @@ package com.webnobis.mastermind.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.EnumSet;
+
 import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXBElement;
 
 import org.junit.jupiter.api.Test;
 
+import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
@@ -30,6 +33,15 @@ class XmlTransformerTest {
 	void testTransformPlay() {
 		String xml = XmlTransformer.toXml(PLAY);
 		assertEquals(PLAY, XmlTransformer.toModel(xml, Play.class));
+	}
+
+	@Test
+	void testTransformColorType() {
+		Play<ColorType> play = Play.of(7,
+				Source.of(EnumSet.allOf(ColorType.class).stream().toArray(i -> new ColorType[i])));
+		String xml = XmlTransformer.toXml(play);
+		System.out.println(xml);
+		assertEquals(play, XmlTransformer.toModel(xml, Play.class));
 	}
 
 	@Test

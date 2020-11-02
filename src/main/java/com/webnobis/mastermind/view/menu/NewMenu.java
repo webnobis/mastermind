@@ -1,15 +1,28 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.menu;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import com.webnobis.mastermind.view.Menuable;
+import com.webnobis.mastermind.view.Updateable;
+
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 
+/**
+ * New menu with some variants of sub menus
+ * 
+ * @author steffen
+ */
 public class NewMenu implements Menuable<Menu> {
 
 	private final Menu menu;
 
+	/**
+	 * Updates the updateable with the used range
+	 * 
+	 * @param updateable updateable
+	 */
 	public NewMenu(Updateable<NewMenu.Range> updateable) {
 		Objects.requireNonNull(updateable);
 
@@ -29,6 +42,12 @@ public class NewMenu implements Menuable<Menu> {
 		return menu;
 	}
 
+	/**
+	 * Holder of cols and rows
+	 * 
+	 * @author steffen
+	 *
+	 */
 	public class Range {
 
 		private final int cols;
@@ -39,10 +58,18 @@ public class NewMenu implements Menuable<Menu> {
 			this.rows = rows;
 		}
 
+		/**
+		 * 
+		 * @return cols
+		 */
 		public int getCols() {
 			return cols;
 		}
 
+		/**
+		 * 
+		 * @return rows
+		 */
 		public int getRows() {
 			return rows;
 		}

@@ -1,18 +1,32 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.node;
 
 import java.util.Objects;
 
+import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.ResultType;
+import com.webnobis.mastermind.view.Constants;
+import com.webnobis.mastermind.view.Paneable;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * Result node
+ * 
+ * @author steffen
+ *
+ */
 public class ResultNode implements Paneable<Pane> {
 
 	private final GridPane pane;
 
+	/**
+	 * Node of bundle of result source and assessment result
+	 * 
+	 * @param result result
+	 */
 	public ResultNode(Result<ColorType> result) {
 		Objects.requireNonNull(result);
 		GridPane resultPane = new GridPane();

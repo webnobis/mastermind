@@ -1,10 +1,14 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.menu;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import com.webnobis.mastermind.view.Constants;
+import com.webnobis.mastermind.view.Menuable;
+import com.webnobis.mastermind.view.Updateable;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -16,6 +20,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+/**
+ * Store menu
+ * 
+ * @author steffen
+ *
+ */
 public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 
 	private static final String XML_EXT = ".xml";
@@ -24,6 +34,13 @@ public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 
 	private final MenuItem item;
 
+	/**
+	 * Updates the updateable with the file to use for storing.
+	 * 
+	 * @param updateable updateable
+	 * @param idSupplier id supplier
+	 * @param parent     parent
+	 */
 	public StoreMenu(Updateable<Path> updateable, Supplier<String> idSupplier, Window parent) {
 		Objects.requireNonNull(updateable);
 		Objects.requireNonNull(idSupplier);
@@ -47,6 +64,9 @@ public class StoreMenu implements Updateable<Boolean>, Menuable<MenuItem> {
 		return item;
 	}
 
+	/**
+	 * Sets the colored flag before the menu item name: green if false, red if true
+	 */
 	@Override
 	public void update(Boolean storeNeeded) {
 		storedFlag.setBackground(createBackground(Boolean.TRUE.equals(storeNeeded) ? Color.RED : Color.GREEN));

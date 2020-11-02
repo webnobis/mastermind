@@ -1,8 +1,12 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.node;
 
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.webnobis.mastermind.model.ColorType;
+import com.webnobis.mastermind.view.Readable;
+import com.webnobis.mastermind.view.Updateable;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Control;
@@ -17,18 +21,42 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
+/**
+ * Pin node, the graphical representation of a color type<br>
+ * Each node has a circle, filled with the resulting color, except the
+ * {@link ColorType#HOLE}, it's only black bordered.
+ * 
+ * @author steffen
+ *
+ */
 public class PinNode extends Control implements Updateable<ColorType>, Readable<ColorType> {
 
+	/**
+	 * Circle size of all colors, except {@link ColorType#BLACK},
+	 * {@link ColorType#WHITE}
+	 */
 	static final double BIG = 30.0;
 
+	/**
+	 * Circle size of {@link ColorType#BLACK} and {@link ColorType#WHITE}
+	 */
 	static final double SMALL = 15.0;
 
 	private final AtomicReference<ColorType> colorTypeRef;
 
+	/**
+	 * Pin node of {@link ColorType#HOLE}
+	 */
 	public PinNode() {
 		this(null);
 	}
 
+	/**
+	 * Pin node of color type.<br>
+	 * If color type is null, {@link ColorType#HOLE} is used.
+	 * 
+	 * @param colorType color type
+	 */
 	public PinNode(ColorType colorType) {
 		super();
 		super.setSkin(new LabelSkin(new Label()));
@@ -41,6 +69,12 @@ public class PinNode extends Control implements Updateable<ColorType>, Readable<
 		return colorTypeRef.get();
 	}
 
+	/**
+	 * Updates the pin node with the new color type.<br>
+	 * If color type is null, {@link ColorType#HOLE} is used.
+	 * 
+	 * @param colorType color type
+	 */
 	@Override
 	public void update(ColorType colorType) {
 		colorTypeRef.set(Optional.ofNullable(colorType).orElse(ColorType.HOLE));

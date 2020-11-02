@@ -3,7 +3,10 @@ package com.webnobis.mastermind.view;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.model.Source;
+import com.webnobis.mastermind.view.node.NextTryNode;
+import com.webnobis.mastermind.view.node.PinPaletteNode;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -11,8 +14,21 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 
+/**
+ * Next try dialog
+ * 
+ * @author steffen
+ *
+ */
 public class NextTryDialog {
 
+	/**
+	 * Creates the next try dialog.<br>
+	 * It shows the color type palette and the next try area.
+	 * 
+	 * @param cols       cols
+	 * @param updateable updateable of resulting source
+	 */
 	public NextTryDialog(int cols, Updateable<Source<ColorType>> updateable) {
 		Objects.requireNonNull(updateable);
 		NextTryNode nextTryNode = new NextTryNode(cols);

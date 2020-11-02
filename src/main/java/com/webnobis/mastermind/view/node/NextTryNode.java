@@ -1,21 +1,40 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.node;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
+import com.webnobis.mastermind.model.ColorType;
+import com.webnobis.mastermind.view.Constants;
+import com.webnobis.mastermind.view.Paneable;
+import com.webnobis.mastermind.view.Readable;
+
 import javafx.geometry.Insets;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * Next try node
+ * 
+ * @author steffen
+ *
+ */
 public class NextTryNode implements Readable<ColorType[]>, Paneable<Pane> {
 
 	private final List<PinNode> pinNodes;
 
 	private final GridPane pane;
 
+	/**
+	 * Node of cols count fields, to paste dropped color types resulting pine nodes.
+	 * 
+	 * @param cols cols
+	 * @see DragEvent#getDragboard()
+	 * @see PinNode#PinNode(ColorType)
+	 */
 	public NextTryNode(int cols) {
 		pinNodes = new CopyOnWriteArrayList<>();
 		pane = new GridPane();

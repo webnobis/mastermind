@@ -1,15 +1,24 @@
-package com.webnobis.mastermind.view;
+package com.webnobis.mastermind.view.menu;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.model.Play;
 import com.webnobis.mastermind.service.PlayService;
+import com.webnobis.mastermind.view.Menuable;
+import com.webnobis.mastermind.view.Updateable;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.Window;
 
+/**
+ * Play menu, containing all menu items
+ * 
+ * @author steffen
+ *
+ */
 public class PlayMenu implements Menuable<Menu> {
 
 	private final Window parent;
@@ -20,6 +29,14 @@ public class PlayMenu implements Menuable<Menu> {
 
 	private final AtomicReference<Play<ColorType>> playRef;
 
+	/**
+	 * Updates the updateable with the changed play, depending on menu item relevant
+	 * service method.
+	 * 
+	 * @param parent      parent
+	 * @param playService play service
+	 * @param updateable  updateable
+	 */
 	public PlayMenu(Window parent, PlayService<ColorType> playService, Updateable<Play<ColorType>> updateable) {
 		this.parent = Objects.requireNonNull(parent);
 		this.playService = Objects.requireNonNull(playService);
