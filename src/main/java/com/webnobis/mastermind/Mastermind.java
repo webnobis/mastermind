@@ -1,5 +1,7 @@
 package com.webnobis.mastermind;
 
+import java.util.function.Supplier;
+
 import com.webnobis.mastermind.view.MastermindDialog;
 
 import javafx.application.Application;
@@ -12,6 +14,8 @@ import javafx.application.Application;
  */
 public class Mastermind {
 
+	static Supplier<Class<? extends Application>> appSupplier = () -> MastermindDialog.class;
+
 	/**
 	 * Starts the graphical representation
 	 * 
@@ -20,7 +24,7 @@ public class Mastermind {
 	 * @see MastermindDialog#start(javafx.stage.Stage)
 	 */
 	public static void main(String[] args) {
-		Application.launch(MastermindDialog.class, args);
+		Application.launch(appSupplier.get());
 	}
 
 }

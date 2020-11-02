@@ -40,7 +40,6 @@ class XmlTransformerTest {
 		Play<ColorType> play = Play.of(7,
 				Source.of(EnumSet.allOf(ColorType.class).stream().toArray(i -> new ColorType[i])));
 		String xml = XmlTransformer.toXml(play);
-		System.out.println(xml);
 		assertEquals(play, XmlTransformer.toModel(xml, Play.class));
 	}
 

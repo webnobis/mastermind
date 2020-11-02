@@ -1,6 +1,7 @@
 package com.webnobis.mastermind.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -11,10 +12,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
-import java.util.stream.Stream;
+
+import javax.xml.bind.JAXB;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +33,8 @@ class PlayServiceTest {
 
 	private static final int COLS = 3;
 
+	private static final int ROWS = 2;
+
 	private static final IntFunction<Source<Integer>> SOLUTION_GENERATOR = cols -> {
 		assertSame(COLS, cols);
 		return SOURCE;
@@ -39,105 +43,125 @@ class PlayServiceTest {
 	private static final BiFunction<Source<Integer>, Source<Integer>, Result<Integer>> ASSESSMENT_SERVICE = (source,
 			trySource) -> Result.of(trySource, ResultType.PRESENT);
 
-	private Path tmpFolder;
+	private Path tmpFile;
 
 	private PlayService<Integer> playService;
 
-	private Play<Integer> play;
-
 	@BeforeEach
 	void setUp() throws Exception {
-		tmpFolder = Files.createTempDirectory(PlayServiceTest.class.getSimpleName());
+		tmpFile = Files.createTempFile(PlayServiceTest.class.getSimpleName(), ".xml");
 
-		playService = new PlayService<>(tmpFolder, SOLUTION_GENERATOR, ASSESSMENT_SERVICE);
-
-		play = playService.newPlay(COLS);
-		assertNull(play.getSource());
+		playService = new PlayService<>(SOLUTION_GENERATOR, ASSESSMENT_SERVICE);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		Files.newDirectoryStream(tmpFolder).forEach(t -> {
+		Optional.ofNullable(tmpFile).filter(Files::exists).ifPresent(t -> {
 			try {
 				Files.delete(t);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
 		});
-		Files.delete(tmpFolder);
 	}
 
 	@Test
-	void testNewPlay() throws IOException {
-		Play<Integer> play2 = playService.newPlay(COLS, 2);
-
+	void testNewUnlimitedPlay() throws IOException {
+		Play<Integer> play = playService.newPlay(COLS);
 		assertNotNull(play);
-		assertNotNull(play2);
-		assertNull(play2.getSource());
-		assertNotEquals(play, play2);
+		assertNotEquals(play, playService.newPlay(COLS));
+		assertNotNull(play.getId());
+		assertSame(COLS, play.getCols());
+		assertSame(-1, play.getRows());
+		assertTrue(play.getResults().isEmpty());
+		assertNull(play.getSource());
+		assertFalse(play.isFinish());
+		assertFalse(play.isSolved());
+		assertTrue(play.isUnlimited());
+	}
 
-		assertSame(2L, Files.walk(tmpFolder).filter(Files::isRegularFile).map(file -> {
-			try {
-				return Files.readString(file);
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
-			}
-		}).filter(xml -> xml.contains(play.getId()) || xml.contains(play2.getId())).count());
+	@Test
+	void testNewLimitedPlay() throws IOException {
+		Play<Integer> play = playService.newPlay(COLS, ROWS);
+		assertNotNull(play);
+		assertNotNull(play.getId());
+		assertSame(COLS, play.getCols());
+		assertSame(ROWS, play.getRows());
+		assertTrue(play.getResults().isEmpty());
+		assertNull(play.getSource());
+		assertFalse(play.isFinish());
+		assertFalse(play.isSolved());
+		assertFalse(play.isUnlimited());
 	}
 
 	@Test
 	void testGetPlay() {
-		Play<Integer> play1 = playService.getPlay(play.getId());
+		JAXB.marshal(Play.of(COLS, ROWS, Source.of(1, 2, 3)), tmpFile.toFile());
 
-		assertNotNull(play1);
-		assertNull(play1.getSource());
-		assertEquals(play, play1);
-		assertEquals(play.getId(), play1.getId());
+		Play<Integer> play = playService.getPlay(tmpFile);
+		assertNotNull(play);
+		assertSame(COLS, play.getCols());
+		assertSame(ROWS, play.getRows());
 	}
 
 	@Test
 	void testNextTry() {
-		Source<Integer> source = Source.of(42);
-		Play<Integer> play1 = playService.nextTry(play.getId(), source);
+		String id = playService.newPlay(COLS).getId();
+		assertNotNull(id);
 
-		assertTrue(play.getResults().isEmpty());
+		Source<Integer> source = Source.of(3);
+		Play<Integer> play = playService.nextTry(id, source);
+		assertNotNull(play);
+		assertEquals(id, play.getId());
 
-		assertNotNull(play1);
-		assertNull(play1.getSource());
-		assertEquals(play1.getId(), play1.getId());
-		List<Result<Integer>> results = play1.getResults();
-		assertSame(1, results.size());
-		Result<Integer> result = results.iterator().next();
-		assertEquals(source.getSources(), result.getSources());
-		assertSame(1, result.getResults().size());
+		assertSame(1, play.getResults().size());
+		Result<Integer> result = play.getResults().iterator().next();
+		assertNotNull(result);
 		assertEquals(ResultType.PRESENT, result.getResults().iterator().next());
 	}
 
 	@Test
 	void testQuitPlay() {
-		Play<Integer> play1 = playService.quitPlay(play.getId());
+		Play<?> newPlay = playService.newPlay(COLS, ROWS);
+		assertNotNull(newPlay);
+		assertFalse(newPlay.isFinish());
+		assertFalse(newPlay.isSolved());
+		assertFalse(newPlay.isUnlimited());
+		assertNull(newPlay.getSource());
 
-		assertNull(play.getSource());
-
-		assertNotNull(play1);
-		assertNotNull(play1.getSource());
-		assertEquals(play1.getId(), play1.getId());
-
-		assertTrue(Stream.of(play.isFinish(), play1.isFinish(), play.isSolved(), play1.isSolved())
-				.allMatch(Boolean.FALSE::equals));
+		Play<Integer> play = playService.quitPlay(newPlay.getId());
+		assertNotNull(play);
+		assertEquals(newPlay.getId(), play.getId());
+		assertTrue(play.isFinish());
+		assertFalse(play.isSolved());
+		assertFalse(play.isUnlimited());
+		assertNotNull(play.getSource());
+		assertTrue(play.getResults().isEmpty());
 	}
 
 	@Test
-	void testRemovePlay() throws IOException {
-		playService.removePlay(play.getId());
+	void testRemovePlay() {
+		Play<?> newPlay = playService.newPlay(COLS, ROWS);
+		assertNotNull(newPlay);
+		JAXB.marshal(newPlay, tmpFile.toFile());
+		assertTrue(Files.exists(tmpFile));
 
-		assertTrue(Files.walk(tmpFolder).filter(Files::isRegularFile).map(file -> {
-			try {
-				return Files.readString(file);
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
-			}
-		}).noneMatch(xml -> xml.contains(play.getId())));
+		playService.removePlay(tmpFile);
+
+		assertFalse(Files.exists(tmpFile));
+	}
+
+	@Test
+	void testStorePlay() {
+		Play<?> newPlay = playService.newPlay(COLS, ROWS);
+		assertNotNull(newPlay);
+
+		playService.storePlay(newPlay.getId(), tmpFile);
+
+		assertTrue(Files.exists(tmpFile));
+		Play<?> play = JAXB.unmarshal(tmpFile.toFile(), Play.class);
+		assertNotNull(play);
+		assertEquals(newPlay.getId(), play.getId());
 	}
 
 }
