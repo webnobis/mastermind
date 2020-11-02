@@ -1,9 +1,9 @@
 package com.webnobis.mastermind.service;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -14,74 +14,81 @@ import com.webnobis.mastermind.model.Result;
 import com.webnobis.mastermind.model.Source;
 
 /**
- * File system persistent play service<br>
+ * Cached play service with file system interface<br>
  * Each method except quit gets the play without the solution source.
  * 
  * @author steffen
  * 
- * @param <T> type of findings
+ * @param <T> type of elements
  * @see PlayService#quitPlay(String)
  */
 public class PlayService<T> {
-
-	private static final String XML_FILE_EXT = ".xml";
-
-	private final Path rootPath;
 
 	private final IntFunction<Source<T>> solutionGenerator;
 
 	private final BiFunction<Source<T>, Source<T>, Result<T>> assessmentService;
 
+	private final Map<String, Play<T>> playCache;
+
 	/**
-	 * Play service with root path persistent area, solution generator and
-	 * assessment service
+	 * Play service with solution generator and assessment service
 	 * 
 	 * @param rootPath          root path
 	 * @param solutionGenerator solution generator
 	 * @param assessmentService assessment service
 	 */
-	public PlayService(Path rootPath, IntFunction<Source<T>> solutionGenerator,
+	public PlayService(IntFunction<Source<T>> solutionGenerator,
 			BiFunction<Source<T>, Source<T>, Result<T>> assessmentService) {
-		this.rootPath = Objects.requireNonNull(rootPath, "rootPath is null");
 		this.solutionGenerator = Objects.requireNonNull(solutionGenerator, "solutionGenerator is null");
 		this.assessmentService = Objects.requireNonNull(assessmentService, "assessmentService is null");
+		playCache = new HashMap<>();
 	}
 
 	/**
-	 * New unlimited persist play
+	 * New unlimited play
 	 * 
-	 * @param cols columns, it's the count of searched findings
+	 * @param cols columns, it's the count of searched elements
 	 * @return new play
-	 * @see Play#of(Class, int)
-	 * @see PlayStore#store(Play, Path)
+	 * @see Play#of(int, Source)
+	 * @see Play#isUnlimited()
+	 * @see Play#withoutSource()
 	 */
 	public Play<T> newPlay(int cols) {
-		return storePlay(Play.of(cols, solutionGenerator.apply(cols))).withoutSource();
+		Play<T> play = Play.of(cols, solutionGenerator.apply(cols));
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
-	 * New limited persist play
+	 * New limited play
 	 * 
-	 * @param cols columns, it's the count of searched findings
+	 * @param cols columns, it's the count of searched elements
 	 * @param rows maximum try rows, until the Play is finish, in-depending the
 	 *             solution was found
 	 * @return new play
-	 * @see Play#of(Class, int, int)
-	 * @see PlayStore#store(Play, Path)
+	 * @see Play#of(int, int, Source)
+	 * @see Play#withoutSource()
 	 */
 	public Play<T> newPlay(int cols, int rows) {
-		return storePlay(Play.of(cols, rows, solutionGenerator.apply(cols))).withoutSource();
+		Play<T> play = Play.of(cols, rows, solutionGenerator.apply(cols));
+		playCache.put(play.getId(), play);
+		return play.withoutSource();
 	}
 
 	/**
-	 * Get the persist play, if available
+	 * Gets the persist play, if available
 	 * 
-	 * @param id play id
+	 * @param file file containing a XML play
 	 * @return play, otherwise null
+	 * @throws UncheckedIOException if the play isn't readable
 	 * @see PlayStore#load(Path)
+	 * @see Play#withoutSource()
 	 */
-	public Play<T> getPlay(String id) {
-		return loadPlay(id).withoutSource();
+	public Play<T> getPlay(Path file) {
+		return Optional.ofNullable(PlayStore.<T>load(file)).map(play -> {
+			playCache.put(play.getId(), play);
+			return play.withoutSource();
+		}).orElse(null);
 	}
 
 	/**
@@ -92,17 +99,18 @@ public class PlayService<T> {
 	 * @param trySource next try source
 	 * @return updated play, otherwise null
 	 * @see AssessmentService#assess(Source, Source)
-	 * @see Play#withAddedResult(com.webnobis.mastermind.model.Result)
-	 * @see PlayStore#store(Play, Path)
+	 * @see Play#withAddedResult(Result)
+	 * @see Play#withoutSource()
 	 * @see PlayService#quitPlay(String)
 	 */
 	public Play<T> nextTry(String id, Source<T> trySource) {
 		return Optional
-				.ofNullable(
-						loadPlay(id))
-				.map(play -> play.withAddedResult(assessmentService.apply(play.getSource(),
-						Objects.requireNonNull(trySource, "trySource is null"))).withoutSource())
-				.orElse(null);
+				.ofNullable(id).map(playCache::get).map(foundPlay -> foundPlay.withAddedResult(assessmentService
+						.apply(foundPlay.getSource(), Objects.requireNonNull(trySource, "trySource is null"))))
+				.map(play -> {
+					playCache.put(play.getId(), play);
+					return play.withoutSource();
+				}).orElse(null);
 	}
 
 	/**
@@ -111,40 +119,36 @@ public class PlayService<T> {
 	 * 
 	 * @param id play id
 	 * @return updated play, otherwise null
-	 * @see Play#withSource(Source)
-	 * @see PlayStore#store(Play, Path)
 	 */
 	public Play<T> quitPlay(String id) {
-		return Optional.ofNullable(loadPlay(id)).orElse(null);
+		return Optional.ofNullable(id).map(playCache::get).orElse(null);
+	}
+
+	/**
+	 * Stores the play, if available
+	 * 
+	 * @param id   play id
+	 * @param file file which should containing the XML play
+	 * @return true if available and stored
+	 * @throws UncheckedIOException if the play couldn't be stored
+	 * @see PlayStore#store(Play, Path)
+	 */
+	public boolean storePlay(String id, Path file) {
+		return Optional.ofNullable(id).map(playCache::get).map(play -> PlayStore.store(play, file)).orElse(false);
 	}
 
 	/**
 	 * Removes the persist play, if available
 	 * 
-	 * @param id play id
+	 * @param id   play id
+	 * @param file the file
 	 * @return true if available and removed
 	 * @throws UncheckedIOException if the persist play isn't removable
-	 * @see Files#deleteIfExists(Path)
+	 * @see PlayStore#delete(Path)
 	 */
-	public boolean removePlay(String id) {
-		try {
-			return Files.deleteIfExists(buildFile(id));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
-
-	private Path buildFile(String id) {
-		return rootPath.resolve(Objects.requireNonNull(id, "id is null").concat(XML_FILE_EXT));
-	}
-
-	private Play<T> loadPlay(String id) {
-		return PlayStore.<T>load(buildFile(id));
-	}
-
-	private Play<T> storePlay(Play<T> play) {
-		PlayStore.store(play, buildFile(play.getId()));
-		return play;
+	public boolean removePlay(Path file) {
+		return Optional.ofNullable(getPlay(file)).map(Play::getId).map(playCache::remove)
+				.map(play -> PlayStore.delete(file)).orElse(false);
 	}
 
 }

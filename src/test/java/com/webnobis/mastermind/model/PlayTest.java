@@ -114,9 +114,10 @@ class PlayTest {
 
 	@Test
 	void testIsFinish() {
-		assertFalse(play.isFinish());
+		assertFalse(new Play<>("id 1", COLS, ROWS, Collections.emptyList(), null).isFinish());
+		assertTrue(new Play<>("id 1", COLS, ROWS, Collections.emptyList(), Source.of()).isFinish());
 
-		assertTrue(new Play<Object>("id 1", COLS, ROWS,
+		assertTrue(new Play<>("id 1", COLS, ROWS,
 				Stream.generate(() -> Result.of(Source.of())).limit(ROWS).collect(Collectors.toList()), null)
 						.isFinish());
 

@@ -20,8 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * @author steffen
  *
- * @param <T> type of findings, such as numbers, colors, dogs and cats, or
- *            others
+ * @param <T> type of elements, such as numbers, colors, dogs, cats or others
  */
 @XmlType(propOrder = { "id", "cols", "rows", "source", "unlimited", "finish", "solved", "results" })
 @XmlRootElement
@@ -172,7 +171,8 @@ public class Play<T> {
 	}
 
 	/**
-	 * True, if solved or maximum try rows are reached, if not unlimited tries
+	 * True, if quit (contains source), solved or maximum try rows are reached, if
+	 * not unlimited tries
 	 * 
 	 * @return finish
 	 * @see Play#isSolved()
@@ -180,7 +180,7 @@ public class Play<T> {
 	 */
 	@XmlElement(name = "finish")
 	public boolean isFinish() {
-		return isSolved() || (!isUnlimited() && results.size() >= rows);
+		return source != null || isSolved() || (!isUnlimited() && results.size() >= rows);
 	}
 
 	/**
