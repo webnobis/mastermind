@@ -12,8 +12,9 @@ module com.webnobis.mastermind.Mastermind {
 
 	exports com.webnobis.mastermind.service;
 
-	opens com.webnobis.mastermind.model to java.xml.bind;
-	opens com.webnobis.mastermind to javafx.graphics;
-	opens com.webnobis.mastermind.view to javafx.graphics;
+	opens com.webnobis.mastermind;
+	opens com.webnobis.mastermind.model;
+	opens com.webnobis.mastermind.service;
+	opens com.webnobis.mastermind.view;
 
 }
