@@ -35,7 +35,7 @@ public class PinNode extends Control implements Updateable<ColorType>, Readable<
 	 * Circle size of all colors, except {@link ColorType#BLACK},
 	 * {@link ColorType#WHITE}
 	 */
-	static final double BIG = 30.0;
+	static final double BIG = 25.0;
 
 	/**
 	 * Circle size of {@link ColorType#BLACK} and {@link ColorType#WHITE}
