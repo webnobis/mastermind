@@ -1,0 +1,44 @@
+<assembly>
+    <id>bin</id>
+    <!-- Generates a zip package containing the needed files -->
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+    </formats>
+
+    <fileSets>
+		<fileSet>
+			<directory>${project.build.directory}/modules</directory>
+			<outputDirectory>modules</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<excludes>
+				<exclude>log4j-*.jar</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<!-- No modules support only as class path -->
+			<directory>${project.build.directory}/modules</directory>
+			<outputDirectory>lib</outputDirectory>
+			<includes>
+				<include>log4j-*.jar</include>
+			</includes>
+		</fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>start.bat</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>start.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
+</assembly>

@@ -14,7 +14,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.Window;
 
 /**
- * Play menu, containing all menu items
+ * Play menu, containing all play menu items
  * 
  * @author steffen
  *

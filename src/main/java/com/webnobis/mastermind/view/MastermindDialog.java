@@ -6,6 +6,7 @@ import com.webnobis.mastermind.Mastermind;
 import com.webnobis.mastermind.model.ColorType;
 import com.webnobis.mastermind.service.AssessmentService;
 import com.webnobis.mastermind.service.PlayService;
+import com.webnobis.mastermind.view.menu.InfoMenu;
 import com.webnobis.mastermind.view.menu.PlayMenu;
 import com.webnobis.mastermind.view.node.PlayNode;
 
@@ -29,15 +30,10 @@ import javafx.stage.Stage;
 public class MastermindDialog extends Application {
 
 	/**
-	 * Author
-	 */
-	public static final String AUTHOR = "Steffen Nobis";
-
-	/**
 	 * Title
 	 */
-	public static final String TITLE = MessageFormat.format("{0} {1} ({2})", Mastermind.class.getSimpleName(),
-			Constants.VERSION.getValue(), AUTHOR);
+	public static final String TITLE = MessageFormat.format("{0} {1}", Mastermind.class.getSimpleName(),
+			Constants.VERSION.getValue());
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -46,7 +42,7 @@ public class MastermindDialog extends Application {
 
 		PlayNode playNode = new PlayNode(stage);
 		PlayMenu playMenu = new PlayMenu(stage, playService, playNode);
-		VBox pane = new VBox(new MenuBar(playMenu.getMenuItem()), playNode.getPane());
+		VBox pane = new VBox(new MenuBar(playMenu.getMenuItem(), new InfoMenu().getMenuItem()), playNode.getPane());
 
 		stage.setTitle(TITLE);
 		stage.centerOnScreen();

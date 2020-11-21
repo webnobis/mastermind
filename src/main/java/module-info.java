@@ -9,7 +9,9 @@ module com.webnobis.mastermind.Mastermind {
 	requires javafx.base;
 	requires javafx.controls;
 	requires javafx.graphics;
+	requires javafx.web;
 
+	exports com.webnobis.mastermind;
 	exports com.webnobis.mastermind.service;
 
 	opens com.webnobis.mastermind;
