@@ -1,9 +1,5 @@
 package com.webnobis.mastermind.view.menu;
 
-import java.net.URL;
-import java.util.NoSuchElementException;
-import java.util.stream.Stream;
-
 import com.webnobis.mastermind.view.Menuable;
 
 import javafx.geometry.Rectangle2D;
@@ -25,10 +21,7 @@ import javafx.stage.Window;
  */
 public class SourceMenu implements Menuable<MenuItem> {
 
-	static final String SOURCE_IMAGE = Stream
-			.of("/", SourceMenu.class.getPackageName().replace('.', '/'), "/mastermindspielwikipedia.png")
-			.reduce(String::concat).map(SourceMenu.class::getResource).map(URL::toString)
-			.orElseThrow(() -> new NoSuchElementException("missing source image"));
+	static final String SOURCE_IMAGE = ClassLoader.getSystemResource("mastermindspielwikipedia.png").toString();
 
 	/**
 	 * Source

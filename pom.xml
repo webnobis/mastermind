@@ -28,9 +28,9 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
-				<includes>
-					<include>*.xml</include>
-				</includes>
+				<excludes>
+					<exclude>*.properties</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/main/command</directory>
