@@ -33,7 +33,6 @@ public class PlayService<T> {
 	/**
 	 * Play service with solution generator and assessment service
 	 * 
-	 * @param rootPath          root path
 	 * @param solutionGenerator solution generator
 	 * @param assessmentService assessment service
 	 */
@@ -140,7 +139,6 @@ public class PlayService<T> {
 	/**
 	 * Removes the persist play, if available
 	 * 
-	 * @param id   play id
 	 * @param file the file
 	 * @return true if available and removed
 	 * @throws UncheckedIOException if the persist play isn't removable
