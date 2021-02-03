@@ -17,6 +17,44 @@ import com.webnobis.mastermind.model.Source;
 class AssessmentServiceTest {
 
 	@Test
+	void testAssess() {
+		Source<Integer> solutionSource = Source.of(1, 2, 1, 2);
+
+		{
+			Source<Integer> trySource = Source.of(1, 1, 1, 2);
+			Result<Integer> result = AssessmentService.assess(solutionSource, trySource);
+			assertNotNull(result);
+			List<ResultType> results = result.getResults();
+			assertSame(3, results.size());
+			assertTrue(results.stream().allMatch(ResultType.EXACT::equals));
+		}
+		{
+			Source<Integer> trySource = Source.of(null, 1, 1, 2);
+			Result<Integer> result = AssessmentService.assess(solutionSource, trySource);
+			assertNotNull(result);
+			List<ResultType> results = result.getResults();
+			assertSame(3, results.size());
+			assertEquals(1L, results.stream().filter(ResultType.PRESENT::equals).count());
+			assertEquals(2L, results.stream().filter(ResultType.EXACT::equals).count());
+		}
+		{
+			Source<Integer> trySource = Source.of(1, null, 1, 2);
+			Result<Integer> result = AssessmentService.assess(solutionSource, trySource);
+			assertNotNull(result);
+			List<ResultType> results = result.getResults();
+			assertSame(3, results.size());
+			assertTrue(results.stream().allMatch(ResultType.EXACT::equals));
+		}
+		{
+			Result<Integer> result = AssessmentService.assess(solutionSource, solutionSource);
+			assertNotNull(result);
+			List<ResultType> results = result.getResults();
+			assertSame(solutionSource.getSources().size(), results.size());
+			assertTrue(results.stream().allMatch(ResultType.EXACT::equals));
+		}
+	}
+
+	@Test
 	void testAssessEmpty() {
 		Source<Object> solutionSource = Source.of();
 		Source<Object> trySource = Source.of();
