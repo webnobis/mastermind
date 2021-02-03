@@ -41,6 +41,10 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 
 	private final CheckBox unlimited;
 
+	private final Label sourceLabel;
+
+	private Pane sourcePane;
+
 	private final GridPane pane;
 
 	/**
@@ -70,6 +74,7 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 			unlimited.setSelected(!unlimited.isSelected());
 			event.consume();
 		});
+		sourceLabel = new Label("Lösung:");
 
 		pane = new GridPane();
 		pane.setVgap(Constants.PADDING.getIntValue());
@@ -99,9 +104,12 @@ public class StateNode implements Updateable<Play<ColorType>>, Paneable<Pane> {
 		finish.setSelected(play.isFinish());
 		solved.setSelected(play.isSolved());
 		unlimited.setSelected(play.isUnlimited());
+		pane.getChildren().remove(sourceLabel);
+		Optional.ofNullable(sourcePane).ifPresent(pane.getChildren()::remove);
 		Optional.ofNullable(play.getSource()).ifPresent(source -> {
-			pane.add(new Label("Lösung:"), 0, 6, 3, 1);
-			pane.add(new SourceNode(source).getPane(), 0, 7, 3, 1);
+			pane.add(sourceLabel, 0, 6, 3, 1);
+			sourcePane = new SourceNode(source).getPane();
+			pane.add(sourcePane, 0, 7, 3, 1);
 		});
 	}
 
