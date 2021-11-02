@@ -26,6 +26,7 @@ class MastermindTest {
 
 		static final AtomicBoolean flag = new AtomicBoolean();
 
+		@SuppressWarnings("exports")
 		@Override
 		public void start(Stage stage) throws Exception {
 			assertNotNull(stage);
