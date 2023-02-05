@@ -14,7 +14,7 @@
 		<project.module>com.webnobis.mastermind</project.module>
 		<project.main.class>com.webnobis.mastermind.Mastermind</project.main.class>
 		<project.author>Steffen Nobis</project.author>
-		<java.fx.version>19</java.fx.version>
+		<java.fx.version>19.0.2.1</java.fx.version>
 		<itext.version>7.1.16</itext.version>
 		<junit.version>5.9.2</junit.version>
 	</properties>
